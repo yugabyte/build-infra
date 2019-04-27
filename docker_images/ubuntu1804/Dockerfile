@@ -32,5 +32,11 @@ RUN apt-get -y clean && apt-get -y autoremove
 RUN apt-get install -y unzip
 RUN apt-get -y clean && apt-get -y autoremove
 
-# https://askubuntu.com/questions/94060/run-adduser-non-interactively
+RUN apt-get install -y automake apt-file
+RUN apt-get -y clean && apt-get -y autoremove
+
+RUN apt-get update
+RUN apt-get dist-upgrade -y
+RUN apt-get -y clean && apt-get -y autoremove
+
 RUN adduser --disabled-password --gecos "" yugabuilder
