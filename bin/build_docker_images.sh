@@ -52,14 +52,10 @@ done
 dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
 timestamp=$( get_timestamp_for_filenames )
-versioned_tag=yugabytedb/yb_build_infra_$image_name:v${timestamp}_$USER
-latest_tag=yugabytedb/$image_name:latest
+tag=yugabytedb/yb_build_infra_$image_name:v${timestamp}_$USER
 
-( set -x; docker build -f "$dockerfile_path" -t "$versioned_tag" -t "$latest_tag" . )
-
-if "$should_push"; then
-  for tag in "$versioned_tag" "$latest_tag"; do
-    ( set -x; docker push "$tag" )
-  done
-fi
-
+(
+  set -x
+  docker build -f "$dockerfile_path" -t "$tag" .
+  docker push "$tag"
+)

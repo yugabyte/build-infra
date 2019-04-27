@@ -12,4 +12,3 @@ if [[ ! -d $yb_build_infra_root/yugabyte-bash-common ]]; then
 fi
 
 . "$yb_build_infra_root"/yugabyte-bash-common/src/yugabyte-bash-common.sh
-
