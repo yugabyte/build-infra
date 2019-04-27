@@ -1,2 +1,4 @@
 *.sw?
 *.bak
+.session.vim
+.session.vim.*

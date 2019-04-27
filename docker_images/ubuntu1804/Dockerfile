@@ -25,6 +25,7 @@ RUN apt-get update && \
       libtool \
       apt-file \
       uuid-dev \
+      pkg-config \
       && \
     apt-get -y clean && \
     apt-get -y autoremove && \
