@@ -26,6 +26,7 @@ RUN apt-get update && \
       apt-file \
       uuid-dev \
       pkg-config \
+      libssl-dev \
       && \
     apt-get -y clean && \
     apt-get -y autoremove && \
