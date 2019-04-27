@@ -31,3 +31,5 @@ RUN apt-get update && \
     apt-get -y clean && \
     apt-get -y autoremove && \
     adduser --disabled-password --gecos "" yugabuilder
+
+RUN apt-get update && apt-get -y install libicu-dev
