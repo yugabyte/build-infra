@@ -1,7 +1,7 @@
 FROM centos:7.6.1810
 
 RUN yum upgrade -y && \
-    yum install epel-release && \
+    yum install -y epel-release && \
     yum groupinstall -y 'Development Tools' && \
     yum install -y \
       autoconf \
