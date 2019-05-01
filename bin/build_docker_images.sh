@@ -56,6 +56,15 @@ tag=yugabytedb/yb_build_infra_$image_name:v${timestamp}_$USER
 
 (
   set -x
+  # We need to change to this directory to be able to reference scripts from docker_setup_scripts.
+  cd "$yb_build_infra_root"
   docker build -f "$dockerfile_path" -t "$tag" .
-  docker push "$tag"
 )
+
+if "$should_push"; then
+  log "Pushing $tag to DockerHub (--push specified)."
+  ( set -x; docker push "$tag" )
+else
+  log "Successfully built tag $tag. Specify --push to push to DockerHub."
+fi
+
