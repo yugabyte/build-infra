@@ -31,14 +31,13 @@ RUN apt-get update && \
       wget \
       libffi-dev \
       && \
-    apt-get remove -y gcc-8 g++-8 && \
     apt-get install -y gcc-7 g++-7 && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90 && \
-    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 && \
+    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 100 && \
     update-alternatives --set gcc "/usr/bin/gcc-7" && \
     update-alternatives --set g++ "/usr/bin/g++-7" && \
-    which gcc && \
-    which g++ && \
+    gcc --version && \
+    g++ --version && \
     apt-get -y clean && \
     apt-get -y autoremove && \
     adduser --disabled-password --gecos "" yugabuilder
