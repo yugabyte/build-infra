@@ -29,10 +29,12 @@ RUN apt-get update && \
       unzip \
       uuid-dev \
       wget \
+      locales \
       && \
     apt-get -y clean && \
     apt-get -y autoremove && \
-    adduser --disabled-password --gecos "" yugabuilder
+    adduser --disabled-password --gecos "" yugabyte-ci && \
+    locale-gen en_US.UTF-8
 
 COPY docker_setup_scripts/install_hub_tool.sh /tmp/install_hub_tool.sh
 RUN bash /tmp/install_hub_tool.sh && rm -f /tmp/install_hub_tool.sh

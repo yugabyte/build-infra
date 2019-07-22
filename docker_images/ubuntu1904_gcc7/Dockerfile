@@ -30,6 +30,7 @@ RUN apt-get update && \
       uuid-dev \
       wget \
       libffi-dev \
+      locales \
       && \
     apt-get install -y gcc-7 g++-7 && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 && \
@@ -40,7 +41,8 @@ RUN apt-get update && \
     g++ --version && \
     apt-get -y clean && \
     apt-get -y autoremove && \
-    adduser --disabled-password --gecos "" yugabuilder
+    adduser --disabled-password --gecos "" yugabyte-ci && \
+    locale-gen en_US.UTF-8
 
 COPY docker_setup_scripts/install_hub_tool.sh /tmp/install_hub_tool.sh
 
