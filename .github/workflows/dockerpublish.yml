@@ -13,6 +13,9 @@ on:
   # Run tests for any PRs.
   pull_request:
 
+env:
+  DOCKERHUB_USER: "${{ github.actor }}"
+
 jobs:
   push:
 
@@ -32,13 +35,13 @@ jobs:
         run: >
           bin/build_docker_images.sh \
             -i ${{ matrix.image_name }} \
-            --tag_prefix "${{ github.actor }}" \
+            --tag_prefix "$DOCKERHUB_USER" \
             --tag_output_file docker_tag.txt
 
       - name: Log into registry
         run: >
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | \
-            docker login -u "${{ github.actor }}" --password-stdin
+            docker login -u "$DOCKERHUB_USER" --password-stdin
 
       - name: Push image
         run: |
