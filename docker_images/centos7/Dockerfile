@@ -32,7 +32,14 @@ RUN yum upgrade -y && \
       ruby-devel \
       sudo \
       wget \
-      which
+      which \
+      readline-devel \
+      bzip2-devel \
+      gdbm-devel \
+      libsqlite3x-devel \
+      openssl-devel \
+      centos-release-scl \
+      devtoolset-8
 
 RUN mkdir -p /usr/local/bin && \
     ln -s /usr/bin/cmake3 /usr/local/bin/cmake && \
@@ -46,4 +53,10 @@ RUN rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO && \
 RUN adduser yugabyte-ci
 
 COPY docker_setup_scripts/install_hub_tool.sh /tmp/install_hub_tool.sh
-RUN bash /tmp/install_hub_tool.sh
+RUN bash /tmp/install_hub_tool.sh && \
+    rm -f /tmp/install_hub_tool.sh
+
+COPY docker_setup_scripts/centos_install_python3_from_source.sh \
+     /tmp/centos_install_python3_from_source.sh
+RUN bash /tmp/centos_install_python3_from_source.sh && \
+    rm -f /centos_install_python3_from_source.sh
