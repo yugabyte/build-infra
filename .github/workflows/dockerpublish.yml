@@ -18,8 +18,9 @@ jobs:
 
     strategy:
       matrix:
-        image_name: centos7
-        image_name: ubuntu1804
+        image_name:
+          - centos7
+          - ubuntu1804
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
