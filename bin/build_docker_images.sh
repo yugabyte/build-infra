@@ -22,6 +22,10 @@ Options:
   -i, --image_name
     Image name to build.
     Available options: ${docker_image_names[*]}
+  --tag_user <username>
+    Use this username for the Docker image tag
+  --tag_output_file <tag_output_file>
+    The file to write the resulting Docker image tag to
   -p, --push
     Push the built image(s) to DockerHub (must be logged in).
 EOT
@@ -35,6 +39,8 @@ fi
 
 image_name=""
 should_push=false
+tag_user=""
+tag_output_file=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -49,17 +55,32 @@ while [[ $# -gt 0 ]]; do
     -p|--push)
       should_push=true
     ;;
+    --tag_user)
+      tag_user=$$2
+      shift
+    ;;
+    --tag_output_file)
+      tag_output_file=$2
+      shift
+    ;;
     *)
       fatal "Unknown command: $1"
   esac
   shift
 done
 
+if [[ -z ${tag_user} ]]; then
+  echo "--tag-user not specified" >&2
+  exit 1
+fi
 
 dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
 timestamp=$( get_timestamp_for_filenames )
-tag=yugabytedb/yb_build_infra_$image_name:v${timestamp}_$USER
+tag=$tag_user/yb_build_infra_$image_name:v${timestamp}_$USER
+if [[ -n $tag_output_file ]]; then
+  echo "$tag" >"$tag_output_file"
+fi
 
 (
   set -x
