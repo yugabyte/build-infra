@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 
-. "${BASH_SOURCE%/*}/common.sh"
+# shellcheck source=bin/common.sh
+. "${BASH_SOURCE[0]%/*}/common.sh"
 
 IFS=$'\n'
-docker_image_names=( $( cd "$yb_build_infra_root/docker_images" && ls ) )
+
+# See https://github.com/koalaman/shellcheck/wiki/SC2207 for this syntax.
+docker_image_names=()
+while IFS='' read -r line; do
+  docker_image_names+=( "$line" )
+done < <( cd "$yb_build_infra_root/docker_images" && ls )
+
 unset IFS
 
 print_usage() {
