@@ -26,10 +26,11 @@ export CXXFLAGS=$CFLAGS
 export LDFLAGS="-Wl,-rpath=$python_prefix/lib"
 echo "CFLAG=$CFLAGS"
 echo "LDFLAGS=$LDFLAGS"
-./configure "--prefix=$python_prefix" \
-            "--with-optimizations"
+./configure "--prefix=$python_prefix" "--with-optimizations"
 make
 sudo make install
+# Upgrade pip
+sudo "$python_prefix/bin/pip3" install -U pip
 
 for binary_name in python3 pip3 python3-config; do
   sudo update-alternatives --install "/usr/local/bin/$binary_name" "$binary_name" \
