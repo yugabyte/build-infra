@@ -68,11 +68,6 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-if [[ -z ${tag_user} ]]; then
-  echo "--tag-user not specified" >&2
-  exit 1
-fi
-
 dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
 timestamp=$( get_timestamp_for_filenames )
