@@ -32,11 +32,16 @@ jobs:
         run: >
           bin/build_docker_images.sh \
             -i ${{ matrix.image_name }} \
-            --tag_user "${{ github.actor }}" \
-            --tag_output_file docker_tag_name.txt
+            --tag_prefix "docker.pkg.github.io/${{ github.actor }}/${{ github.repository }}" \
+            --tag_output_file docker_tag.txt
 
       - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        run: >
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+            docker login docker.pkg.github.com -u "${{ github.actor }}" --password-stdin
 
       - name: Push image
-        run: docker push "$(<docker_tag_name.txt)"
+        run: |
+          docker_tag=$(<docker_tag.txt)
+          echo "Docker tag: $docker_tag"
+          docker push

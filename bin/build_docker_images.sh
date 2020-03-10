@@ -39,8 +39,7 @@ fi
 
 image_name=""
 should_push=false
-tag_user=""
-tag_output_file=""
+tag_prefix=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -55,8 +54,8 @@ while [[ $# -gt 0 ]]; do
     -p|--push)
       should_push=true
     ;;
-    --tag_user)
-      tag_user=$$2
+    --tag_prefix)
+      tag_prefix=$2
       shift
     ;;
     --tag_output_file)
@@ -77,7 +76,11 @@ fi
 dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
 timestamp=$( get_timestamp_for_filenames )
-tag=$tag_user/yb_build_infra_$image_name:v${timestamp}_$USER
+if [[ -n $tag_prefix ]]; then
+  tag_prefix=$tag_prefix/
+fi
+
+tag=${tag_prefix}yb_build_infra_$image_name:v${timestamp}
 if [[ -n $tag_output_file ]]; then
   echo "$tag" >"$tag_output_file"
 fi
@@ -95,4 +98,3 @@ if "$should_push"; then
 else
   log "Successfully built tag $tag. Specify --push to push to DockerHub."
 fi
-
