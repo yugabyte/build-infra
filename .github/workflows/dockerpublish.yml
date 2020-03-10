@@ -13,9 +13,6 @@ on:
   # Run tests for any PRs.
   pull_request:
 
-env:
-  IMAGE_NAME: yb-build-infra
-
 jobs:
   push:
 
