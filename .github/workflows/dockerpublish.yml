@@ -14,7 +14,7 @@ on:
   pull_request:
 
 env:
-  DOCKERHUB_USER: "${{ github.actor }}"
+  GITHUB_ORG_AND_REPO: "${{ github.repository }}"
 
 jobs:
   push:
@@ -31,20 +31,25 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build image
-        run: >
+      - name: Build and push the image
+        run: |
+          github_org=${GITHUB_ORG_AND_REPO%%/*}
+          if [[ $github_org == "yugabyte" ]]; then
+            dockerhub_org="yugabytedb"
+            dockerhub_user="yugabyteci"
+          else
+            dockerhub_org=$github_org
+            dockerhub_user=$github_org
+          fi
+          github_repository="${{ github.repository }}
           bin/build_docker_images.sh \
             -i ${{ matrix.image_name }} \
-            --tag_prefix "$DOCKERHUB_USER" \
+            --tag_prefix "$dockerhub_org" \
             --tag_output_file docker_tag.txt
 
-      - name: Log into registry
-        run: >
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | \
-            docker login -u "$DOCKERHUB_USER" --password-stdin
+            docker login -u "$dockerhub_org" --password-stdin
 
-      - name: Push image
-        run: |
           docker_tag=$(<docker_tag.txt)
           echo "Docker tag: $docker_tag"
           docker push "$docker_tag"
