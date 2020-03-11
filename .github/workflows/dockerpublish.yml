@@ -1,0 +1,50 @@
+name: Docker
+
+on:
+  push:
+    # Publish `master` as Docker `latest` image.
+    branches:
+      - master
+
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+
+  # Run tests for any PRs.
+  pull_request:
+
+env:
+  DOCKERHUB_USER: "${{ github.actor }}"
+
+jobs:
+  push:
+
+    strategy:
+      matrix:
+        image_name:
+          - centos7
+          - ubuntu1804
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: >
+          bin/build_docker_images.sh \
+            -i ${{ matrix.image_name }} \
+            --tag_prefix "$DOCKERHUB_USER" \
+            --tag_output_file docker_tag.txt
+
+      - name: Log into registry
+        run: >
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | \
+            docker login -u "$DOCKERHUB_USER" --password-stdin
+
+      - name: Push image
+        run: |
+          docker_tag=$(<docker_tag.txt)
+          echo "Docker tag: $docker_tag"
+          docker push "$docker_tag"

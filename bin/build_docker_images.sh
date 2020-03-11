@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 
-. "${BASH_SOURCE%/*}/common.sh"
+# shellcheck source=bin/common.sh
+. "${BASH_SOURCE[0]%/*}/common.sh"
 
 IFS=$'\n'
-docker_image_names=( $( cd "$yb_build_infra_root/docker_images" && ls ) )
+
+# See https://github.com/koalaman/shellcheck/wiki/SC2207 for this syntax.
+docker_image_names=()
+while IFS='' read -r line; do
+  docker_image_names+=( "$line" )
+done < <( cd "$yb_build_infra_root/docker_images" && ls )
+
 unset IFS
 
 print_usage() {
@@ -15,6 +22,10 @@ Options:
   -i, --image_name
     Image name to build.
     Available options: ${docker_image_names[*]}
+  --tag_user <username>
+    Use this username for the Docker image tag
+  --tag_output_file <tag_output_file>
+    The file to write the resulting Docker image tag to
   -p, --push
     Push the built image(s) to DockerHub (must be logged in).
 EOT
@@ -28,6 +39,7 @@ fi
 
 image_name=""
 should_push=false
+tag_prefix=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -42,17 +54,31 @@ while [[ $# -gt 0 ]]; do
     -p|--push)
       should_push=true
     ;;
+    --tag_prefix)
+      tag_prefix=$2
+      shift
+    ;;
+    --tag_output_file)
+      tag_output_file=$2
+      shift
+    ;;
     *)
       fatal "Unknown command: $1"
   esac
   shift
 done
 
-
 dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
 timestamp=$( get_timestamp_for_filenames )
-tag=yugabytedb/yb_build_infra_$image_name:v${timestamp}_$USER
+if [[ -n $tag_prefix ]]; then
+  tag_prefix=$tag_prefix/
+fi
+
+tag=${tag_prefix}yb_build_infra_$image_name:v${timestamp}
+if [[ -n $tag_output_file ]]; then
+  echo "$tag" >"$tag_output_file"
+fi
 
 (
   set -x
@@ -67,4 +93,3 @@ if "$should_push"; then
 else
   log "Successfully built tag $tag. Specify --push to push to DockerHub."
 fi
-
