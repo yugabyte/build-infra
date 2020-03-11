@@ -42,7 +42,7 @@ jobs:
         run: |
           github_org=${GITHUB_ORG_AND_REPO%%/*}
           if [[ $github_org == "yugabyte" ]]; then
-            dockerhub_org="yugabytedb"
+            dockerhub_org="yugabyteci"
             dockerhub_user="yugabyteci"
           else
             dockerhub_org=$github_org
@@ -53,9 +53,10 @@ jobs:
             --tag_prefix "$dockerhub_org" \
             --tag_output_file docker_tag.txt
 
+          echo "Logging into DockerHub as user '$dockerhub_user'"
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | \
             docker login -u "$dockerhub_user" --password-stdin
 
           docker_tag=$(<docker_tag.txt)
           echo "Docker tag: $docker_tag"
-          docker push "$docker_tag"
+          ( set -x; docker push "$docker_tag" )
