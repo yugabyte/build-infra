@@ -27,7 +27,10 @@ jobs:
           - ubuntu1804
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: >
+      github.event_name == 'push' &&
+      !contains(github.event.head_commit.message, 'skip ci') &&
+      !contains(github.event.head_commit.message, 'ci skip')
 
     steps:
       - uses: actions/checkout@v2
@@ -48,7 +51,7 @@ jobs:
             --tag_output_file docker_tag.txt
 
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | \
-            docker login -u "$dockerhub_org" --password-stdin
+            docker login -u "$dockerhub_user" --password-stdin
 
           docker_tag=$(<docker_tag.txt)
           echo "Docker tag: $docker_tag"
