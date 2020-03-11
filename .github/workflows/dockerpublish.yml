@@ -9,13 +9,16 @@ on:
     tags:
       - v*
 
-    paths_ignore:
+    paths-ignore:
       - README.md
 
   # Run tests for any PRs.
   pull_request:
     branches:
       - master
+
+    paths-ignore:
+      - README.md
 
 env:
   GITHUB_ORG_AND_REPO: "${{ github.repository }}"
