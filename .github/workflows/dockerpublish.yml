@@ -9,6 +9,9 @@ on:
     tags:
       - v*
 
+    paths_ignore:
+      - README.md
+
   # Run tests for any PRs.
   pull_request:
     branches:
