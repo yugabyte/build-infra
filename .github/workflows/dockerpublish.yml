@@ -42,7 +42,6 @@ jobs:
             dockerhub_org=$github_org
             dockerhub_user=$github_org
           fi
-          github_repository="${{ github.repository }}
           bin/build_docker_images.sh \
             -i ${{ matrix.image_name }} \
             --tag_prefix "$dockerhub_org" \
