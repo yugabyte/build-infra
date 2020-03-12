@@ -1,6 +1,7 @@
 # YugabyteDB build infrastructure
 
-![Docker](https://github.com/yugabyte/build-infra/workflows/Docker/badge.svg)
+[![Docker](https://github.com/yugabyte/build-infra/workflows/Docker/badge.svg)](https://github.com/yugabyte/build-infra/actions?query=workflow%3ADocker)
+
 
 This repository contains code to build Docker images that can be used to build
 YugabyteDB. On every commit to this repository we automatically build and push
