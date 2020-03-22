@@ -15,7 +15,7 @@ on:
   # Run tests for any PRs.
   pull_request:
     branches:
-      - "*"
+      - master
 
     paths-ignore:
       - README.md
