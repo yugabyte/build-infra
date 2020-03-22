@@ -24,7 +24,7 @@ env:
   GITHUB_ORG_AND_REPO: "${{ github.repository }}"
 
 jobs:
-  push:
+  build:
 
     strategy:
       matrix:
