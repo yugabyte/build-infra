@@ -30,6 +30,9 @@ RUN apt-get update && \
       uuid-dev \
       wget \
       locales \
+      python3-venv \
+      python3-pip \
+      vim \
       && \
     apt-get -y clean && \
     apt-get -y autoremove && \

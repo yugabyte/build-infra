@@ -15,7 +15,7 @@ on:
   # Run tests for any PRs.
   pull_request:
     branches:
-      - "*"
+      - master
 
     paths-ignore:
       - README.md
@@ -57,10 +57,12 @@ jobs:
             --tag_prefix "$dockerhub_org" \
             --tag_output_file docker_tag.txt
 
-          echo "Logging into DockerHub as user '$dockerhub_user'"
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | \
-            docker login -u "$dockerhub_user" --password-stdin
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            echo "Logging into DockerHub as user '$dockerhub_user'"
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | \
+              docker login -u "$dockerhub_user" --password-stdin
 
-          docker_tag=$(<docker_tag.txt)
-          echo "Docker tag: $docker_tag"
-          ( set -x; docker push "$docker_tag" )
+            docker_tag=$(<docker_tag.txt)
+            echo "Docker tag: $docker_tag"
+            ( set -x; docker push "$docker_tag" )
+          fi

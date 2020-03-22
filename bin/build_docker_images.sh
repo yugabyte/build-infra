@@ -90,6 +90,4 @@ fi
 if "$should_push"; then
   log "Pushing $tag to DockerHub (--push specified)."
   ( set -x; docker push "$tag" )
-else
-  log "Successfully built tag $tag. Specify --push to push to DockerHub."
 fi
