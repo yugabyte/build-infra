@@ -39,7 +39,8 @@ RUN yum upgrade -y && \
       libsqlite3x-devel \
       openssl-devel \
       centos-release-scl \
-      devtoolset-8
+      devtoolset-8 \
+      vim
 
 RUN mkdir -p /usr/local/bin && \
     ln -s /usr/bin/cmake3 /usr/local/bin/cmake && \
