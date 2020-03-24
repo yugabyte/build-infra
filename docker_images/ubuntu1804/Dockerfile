@@ -33,7 +33,7 @@ RUN apt-get update && \
       python3-venv \
       python3-pip \
       vim \
-      xz \
+      xz-utils \
       && \
     apt-get -y clean && \
     apt-get -y autoremove && \
