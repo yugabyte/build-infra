@@ -40,7 +40,8 @@ RUN yum upgrade -y && \
       openssl-devel \
       centos-release-scl \
       devtoolset-8 \
-      vim
+      vim \
+      xz
 
 RUN mkdir -p /usr/local/bin && \
     ln -s /usr/bin/cmake3 /usr/local/bin/cmake && \
@@ -51,7 +52,7 @@ RUN rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO && \
     curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo && \
     yum install -y golang
 
-RUN adduser yugabyte-ci
+RUN adduser yugabyteci
 
 COPY docker_setup_scripts/install_hub_tool.sh /tmp/install_hub_tool.sh
 RUN bash /tmp/install_hub_tool.sh && \
@@ -61,3 +62,6 @@ COPY docker_setup_scripts/centos_install_python3_from_source.sh \
      /tmp/centos_install_python3_from_source.sh
 RUN bash /tmp/centos_install_python3_from_source.sh && \
     rm -f /centos_install_python3_from_source.sh
+
+COPY docker_setup_scripts/install_shellcheck.sh /tmp/install_shellcheck.sh
+RUN bash /tmp/install_shellcheck.sh && rm -f /tmp/install_shellcheck.sh

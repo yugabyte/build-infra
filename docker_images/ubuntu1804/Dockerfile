@@ -33,11 +33,17 @@ RUN apt-get update && \
       python3-venv \
       python3-pip \
       vim \
+      xz-utils \
       && \
     apt-get -y clean && \
     apt-get -y autoremove && \
     adduser --disabled-password --gecos "" yugabyte-ci && \
     locale-gen en_US.UTF-8
 
+RUN adduser yugabyteci
+
 COPY docker_setup_scripts/install_hub_tool.sh /tmp/install_hub_tool.sh
 RUN bash /tmp/install_hub_tool.sh && rm -f /tmp/install_hub_tool.sh
+
+COPY docker_setup_scripts/install_shellcheck.sh /tmp/install_shellcheck.sh
+RUN bash /tmp/install_shellcheck.sh && rm -f /tmp/install_shellcheck.sh
