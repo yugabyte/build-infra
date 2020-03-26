@@ -7,10 +7,5 @@ This repository contains code to build Docker images that can be used to build
 YugabyteDB. On every commit to this repository we automatically build and push
 the following Docker images:
 
-## CentOS 7
-- https://hub.docker.com/repository/docker/yugabyteci/yb_build_infra_centos7
-- https://hub.docker.com/repository/registry-1.docker.io/yugabyteci/yb_build_infra_centos7/tags?page=1
-
-## Ubuntu 18.04
-- https://hub.docker.com/repository/docker/yugabyteci/yb_build_infra_ubuntu1804
-- https://hub.docker.com/repository/registry-1.docker.io/yugabyteci/yb_build_infra_ubuntu1804/tags?page=1
+- CentOS 7: https://hub.docker.com/r/yugabyteci/yb_build_infra_centos7/tags
+- Ubuntu 18.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu1804/tags
