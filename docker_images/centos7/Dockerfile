@@ -53,12 +53,10 @@ RUN rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO && \
     curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo && \
     yum install -y golang
 
-RUN adduser yugabyteci
-
 COPY docker_setup_scripts /tmp/yb_docker_setup_scripts
 
 RUN /tmp/yb_docker_setup_scripts/centos_install_python3_from_source.sh
 
-RUN /tmp/yb_docker_setup_scripts/install_common_tools.sh
+RUN /tmp/yb_docker_setup_scripts/perform_common_setup.sh
 
 RUN rm -rf /tmp/yb_docker_setup_scripts
