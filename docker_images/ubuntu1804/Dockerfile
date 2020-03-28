@@ -42,7 +42,7 @@ RUN apt-get update && \
 
 RUN adduser yugabyteci
 
-COPY ../../docker_setup_scripts /tmp/yb_docker_setup_scripts
+COPY docker_setup_scripts /tmp/yb_docker_setup_scripts
 
 RUN /tmp/yb_docker_setup_scripts/install_common_tools.sh
 

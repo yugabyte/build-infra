@@ -55,7 +55,7 @@ RUN rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO && \
 
 RUN adduser yugabyteci
 
-COPY ../../docker_setup_scripts /tmp/yb_docker_setup_scripts
+COPY docker_setup_scripts /tmp/yb_docker_setup_scripts
 
 RUN /tmp/yb_docker_setup_scripts/centos_install_python3_from_source.sh
 
