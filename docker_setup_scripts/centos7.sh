@@ -48,19 +48,29 @@ packages=(
     xz
 )
 
+echo "::group::Installing CentOS 7 packages"
 yum install -y "${packages[@]}"
+echo "::endgroup::"
     
 # TODO: install CMake from the binary package instead.
 mkdir -p /usr/local/bin
 ln -s /usr/bin/cmake3 /usr/local/bin/cmake
 ln -s /usr/bin/ctest3 /usr/local/bin/ctest
 
+echo "::group::Installig Golang"
 rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
 curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
 yum install -y golang
-yum clean all
+echo "::endgroup::"
 
+echo "::group::Yum cleanup"
+yum clean all
+echo "::endgroup::"
+
+echo "::group::Installing Python 3 from source"
 bash /tmp/yb_docker_setup_scripts/centos_install_python3_from_source.sh
+echo "::endgroup::"
+
 bash /tmp/yb_docker_setup_scripts/perform_common_setup.sh
 
 rm -rf /tmp/yb_docker_setup_scripts
