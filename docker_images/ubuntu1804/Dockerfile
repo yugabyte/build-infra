@@ -42,8 +42,6 @@ RUN apt-get update && \
 
 RUN adduser yugabyteci
 
-COPY docker_setup_scripts/install_hub_tool.sh /tmp/install_hub_tool.sh
-RUN bash /tmp/install_hub_tool.sh && rm -f /tmp/install_hub_tool.sh
-
-COPY docker_setup_scripts/install_shellcheck.sh /tmp/install_shellcheck.sh
-RUN bash /tmp/install_shellcheck.sh && rm -f /tmp/install_shellcheck.sh
+RUN /tmp/yb_docker_setup_scripts/install_hub_tool.sh
+RUN /tmp/yb_docker_setup_scripts/install_shellcheck.sh
+RUN /tmp/yb_docker_setup_scripts/install_ninja.sh
