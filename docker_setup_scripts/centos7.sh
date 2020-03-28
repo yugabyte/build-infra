@@ -23,6 +23,7 @@ packages=(
     gdbm-devel
     git
     java-1.8.0-openjdk
+    java-1.8.0-openjdk-devel
     less
     libffi-devel
     libselinux-python
@@ -48,7 +49,7 @@ packages=(
     xz
 )
 
-echo "::group::Installing CentOS 7 packages"
+echo "::group::Installing CentOS packages"
 yum install -y "${packages[@]}"
 echo "::endgroup::"
     
