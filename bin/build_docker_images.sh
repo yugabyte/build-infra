@@ -85,11 +85,7 @@ fi
   # We need to change to this directory to be able to reference scripts from docker_setup_scripts.
   cd "$yb_build_infra_root"
 
-  docker build -f "$dockerfile_path" -t "$tag" \
-      --mount type=bind,\
-source=$yb_build_infra_root/docker_setup_scripts,\
-target=/tmp/yb_docker_setup_scripts
-
+  docker build -f "$dockerfile_path" -t "$tag"
 )
 
 if "$should_push"; then
