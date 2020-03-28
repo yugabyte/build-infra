@@ -14,16 +14,11 @@ if [[ $OSTYPE == linux* ]]; then
 fi
 echo "::endgroup::"
 
-echo "::group::Creating the /opt/yb-build directory hierarchy"
-for dir_name in brew download_cache thirdparty tmp; do
-  dir_path=/opt/yb-build/$dir_name
-  mkdir -p "$dir_path"
-  chmod 777 "$dir_path"
-done
-chmod 777 /opt/yb-build
-echo "::endgroup::"
-
 cd "${BASH_SOURCE[0]%/*}"
+
+echo "::group::Creating the /opt/yb-build directory hierarchy"
+bash ./create_opt_yb-build_dirs.sh
+echo "::endgroup::"
 
 # These scripts might not executable once copied into the Docker container.
 echo "::group::Installing the hub tool for interacting with GitHub"
