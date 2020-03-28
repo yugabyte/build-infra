@@ -10,6 +10,7 @@ fi
 
 cd "${BASH_SOURCE[0]%/*}"
 
-./install_hub_tool.sh
-./install_ninja.sh
-./install_shellcheck.sh
+# These scripts might not executable once copied into the Docker container.
+bash ./install_hub_tool.sh
+bash ./install_ninja.sh
+bash ./install_shellcheck.sh
