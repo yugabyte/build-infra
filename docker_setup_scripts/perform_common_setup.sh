@@ -19,7 +19,7 @@ for dir_name in brew download_cache thirdparty tmp; do
   dir_path=/opt/yb-build/$dir_name
   mkdir -p "$dir_path"
   chmod 777 "$dir_path"
-fi
+done
 chmod 777 /opt/yb-build
 echo "::endgroup::"
 

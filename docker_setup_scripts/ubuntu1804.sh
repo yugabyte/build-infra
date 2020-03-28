@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
+echo "::group::apt update"
 apt-get update
 apt-get dist-upgrade -y
+echo "::endgroup::"
 
 packages=(
     apt-file
@@ -36,12 +38,16 @@ packages=(
     vim
     wget
     xz-utils
-)    
+)
 
+echo "::group::Installing Ubuntu packages"
 apt-get install -y "${packages[@]}"
+echo "::endgroup::"
 
+echo "::group::apt cleanup"
 apt-get -y clean
 apt-get -y autoremove
+echo "::endgroup::"
 
 locale-gen en_US.UTF-8
 
