@@ -45,6 +45,6 @@ apt-get -y autoremove
 
 locale-gen en_US.UTF-8
 
-/tmp/yb_docker_setup_scripts/perform_common_setup.sh
+bash /tmp/yb_docker_setup_scripts/perform_common_setup.sh
 
 rm -rf /tmp/yb_docker_setup_scripts
