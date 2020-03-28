@@ -14,7 +14,7 @@ export GOPATH=$HOME/go
 hub_src_dir="$GOPATH"/src/github.com/github/hub
 mkdir -p "$hub_src_dir"
 git clone \
-  --branch v2.11.2 \
+  --branch v2.14.2 \
   --config transfer.fsckobjects=false \
   --config receive.fsckobjects=false \
   --config fetch.fsckobjects=false \

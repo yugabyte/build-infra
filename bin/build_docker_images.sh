@@ -84,6 +84,7 @@ fi
   set -x
   # We need to change to this directory to be able to reference scripts from docker_setup_scripts.
   cd "$yb_build_infra_root"
+
   docker build -f "$dockerfile_path" -t "$tag" .
 )
 
