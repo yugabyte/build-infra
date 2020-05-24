@@ -32,3 +32,7 @@ echo "::endgroup::"
 echo "::group::Installing shellcheck"
 bash ./install_shellcheck.sh
 echo "::endgroup::"
+
+echo "::group::Installing Apache Maven"
+bash ./install_maven.sh
+echo "::endgroup::"
