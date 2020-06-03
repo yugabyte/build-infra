@@ -12,7 +12,6 @@ packages=(
     apt-utils
     automake
     bison
-    cmake
     curl
     flex
     git

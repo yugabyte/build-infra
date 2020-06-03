@@ -29,6 +29,10 @@ echo "::group::Instaling the Ninja build system"
 bash ./install_ninja.sh
 echo "::endgroup::"
 
+echo "::group::Installing CMake"
+bash ./install_cmake.sh
+echo "::endgroup::"
+
 echo "::group::Installing shellcheck"
 bash ./install_shellcheck.sh
 echo "::endgroup::"
