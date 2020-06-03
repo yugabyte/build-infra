@@ -13,8 +13,6 @@ packages=(
     bzip2-devel
     ccache
     centos-release-scl
-    cmake3
-    ctest3
     curl
     devtoolset-8
     epel-release
@@ -53,11 +51,6 @@ echo "::group::Installing CentOS packages"
 yum install -y "${packages[@]}"
 echo "::endgroup::"
     
-# TODO: install CMake from the binary package instead.
-mkdir -p /usr/local/bin
-ln -s /usr/bin/cmake3 /usr/local/bin/cmake
-ln -s /usr/bin/ctest3 /usr/local/bin/ctest
-
 echo "::group::Installig Golang"
 rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
 curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
