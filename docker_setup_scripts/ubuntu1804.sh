@@ -19,6 +19,7 @@ packages=(
     less
     libbz2-dev
     libicu-dev
+    libncurses5-dev
     libreadline-dev
     libssl-dev
     libtool
