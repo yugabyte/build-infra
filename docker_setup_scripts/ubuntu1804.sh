@@ -27,6 +27,8 @@ packages=(
     maven
     openjdk-8-jdk-headless
     pkg-config
+    python-dev
+    python-pip
     python3-dev
     python3-pip
     python3-venv
