@@ -6,13 +6,15 @@ yum upgrade -y
 yum install -y epel-release
 yum groupinstall -y 'Development Tools'
 
+# We have to install centos-release-scl before installing devtoolset-8.
+yum install -y centos-release-scl
+
 packages=(
     autoconf
     bind-utils
     bzip2
     bzip2-devel
     ccache
-    centos-release-scl
     curl
     devtoolset-8
     epel-release
@@ -49,8 +51,13 @@ packages=(
 
 echo "::group::Installing CentOS packages"
 yum install -y "${packages[@]}"
+
+if [[ ! -f /opt/rh/devtoolset-8/enable ]]; then
+  echo "devtoolset-8 did not get installed" >&2
+  exit 1
+fi
 echo "::endgroup::"
-    
+
 echo "::group::Installig Golang"
 rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
 curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
