@@ -13,31 +13,29 @@ EOT
 
 apt-get update
 
-# Not installing:
-#    libllvm-$CLANG_VERSION-ocaml-dev
-
 packages=(
+    clang-$CLANG_VERSION
+    clang-$CLANG_VERSION-doc
+    clang-format-$CLANG_VERSION
+    clang-tools-$CLANG_VERSION
+    clangd-$CLANG_VERSION
+    libc++-$CLANG_VERSION-dev
+    libc++abi-$CLANG_VERSION-dev
+    libclang-$CLANG_VERSION-dev
+    libclang-common-$CLANG_VERSION-dev
+    libclang1-$CLANG_VERSION
+    libfuzzer-$CLANG_VERSION-dev
+    libllvm-$CLANG_VERSION-ocaml-dev
     libllvm$CLANG_VERSION
+    libomp-$CLANG_VERSION-dev
+    lld-$CLANG_VERSION
+    lldb-$CLANG_VERSION
     llvm-$CLANG_VERSION
     llvm-$CLANG_VERSION-dev
     llvm-$CLANG_VERSION-doc
     llvm-$CLANG_VERSION-examples
     llvm-$CLANG_VERSION-runtime
-    clang-$CLANG_VERSION
-    clang-tools-$CLANG_VERSION
-    clang-$CLANG_VERSION-doc
-    libclang-common-$CLANG_VERSION-dev
-    libclang-$CLANG_VERSION-dev
-    libclang1-$CLANG_VERSION
-    clang-format-$CLANG_VERSION
     python3-clang-$CLANG_VERSION
-    clangd-$CLANG_VERSION
-    libfuzzer-$CLANG_VERSION-dev
-    lldb-$CLANG_VERSION
-    lld-$CLANG_VERSION
-    libc++-$CLANG_VERSION-dev
-    libc++abi-$CLANG_VERSION-dev
-    libomp-$CLANG_VERSION-dev
 )
 
 apt-get install -y "${packages[@]}"
