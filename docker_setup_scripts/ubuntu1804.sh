@@ -46,6 +46,10 @@ echo "::group::Installing Ubuntu packages"
 apt-get install -y "${packages[@]}"
 echo "::endgroup::"
 
+echo "::group::Installing LLVM/Clang packages"
+bash /tmp/yb_docker_setup_scripts/ubuntu_install_llvm_packages.sh
+echo "::endgroup::"
+
 echo "::group::apt cleanup"
 apt-get -y clean
 apt-get -y autoremove
