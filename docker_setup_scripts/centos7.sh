@@ -17,6 +17,7 @@ packages=(
     ccache
     curl
     devtoolset-8
+    devtoolset-8-libatomic-devel
     epel-release
     gcc
     gcc-c++
@@ -25,6 +26,7 @@ packages=(
     java-1.8.0-openjdk
     java-1.8.0-openjdk-devel
     less
+    libatomic
     libffi-devel
     libselinux-python
     libsemanage-python

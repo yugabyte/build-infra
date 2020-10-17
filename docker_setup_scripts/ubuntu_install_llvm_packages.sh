@@ -13,6 +13,11 @@ EOT
 
 apt-get update
 
+not_installed_packages=(
+    libllvm-$CLANG_VERSION-ocaml-dev
+    libomp-$CLANG_VERSION-dev
+)
+
 packages=(
     clang-$CLANG_VERSION
     clang-$CLANG_VERSION-doc
@@ -25,9 +30,7 @@ packages=(
     libclang-common-$CLANG_VERSION-dev
     libclang1-$CLANG_VERSION
     libfuzzer-$CLANG_VERSION-dev
-    libllvm-$CLANG_VERSION-ocaml-dev
     libllvm$CLANG_VERSION
-    libomp-$CLANG_VERSION-dev
     lld-$CLANG_VERSION
     lldb-$CLANG_VERSION
     llvm-$CLANG_VERSION
