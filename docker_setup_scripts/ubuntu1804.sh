@@ -40,6 +40,7 @@ packages=(
     vim
     wget
     xz-utils
+    groff-base
 )
 
 echo "::group::Installing Ubuntu packages"
