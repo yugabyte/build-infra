@@ -41,6 +41,10 @@ packages=(
     wget
     xz-utils
     groff-base
+    gcc-8
+    g++-8
+    libasan5
+    libtsan0
 )
 
 echo "::group::Installing Ubuntu packages"
