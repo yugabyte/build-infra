@@ -7,10 +7,10 @@ readonly LLVM_VERSIONS=( 10 11 )
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 
 for llvm_version in "${LLVM_VERSIONS[@]}"; do
-  cat >"/etc/apt/sources.list.d/llvm$llvm_version.list" <<-EOT
-  deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main
-  deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main
-EOT
+  (
+    echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-$llvm_version main"
+    echo "deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic-$llvm_version main"
+  ) >"/etc/apt/sources.list.d/llvm$llvm_version.list"
 done
 
 apt-get update
