@@ -18,6 +18,8 @@ packages=(
     curl
     devtoolset-8
     devtoolset-8-libatomic-devel
+    devtoolset-9
+    devtoolset-9-libatomic-devel
     epel-release
     gcc
     gcc-c++

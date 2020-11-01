@@ -1,44 +1,46 @@
 #!/usr/bin/env bash
 
-readonly CLANG_VERSION=10
+set -euo pipefail -x
 
-set -euo pipefail
+readonly LLVM_VERSIONS=( 10 11 )
 
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 
-cat >/etc/apt/sources.list.d/llvm10.list <<-EOT
-deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main
-deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main
-EOT
+for llvm_version in "${LLVM_VERSIONS[@]}"; do
+  (
+    echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-$llvm_version main"
+    echo "deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic-$llvm_version main"
+  ) >"/etc/apt/sources.list.d/llvm$llvm_version.list"
+done
 
 apt-get update
 
-not_installed_packages=(
-    libllvm-$CLANG_VERSION-ocaml-dev
-    libomp-$CLANG_VERSION-dev
-)
+for llvm_version in "${LLVM_VERSIONS[@]}"; do
+  # Not installing packages:
+  #   libllvm-$llvm_version-ocaml-dev
+  #   libomp-$llvm_version-dev
+  packages=(
+      clang-$llvm_version
+      clang-$llvm_version-doc
+      clang-format-$llvm_version
+      clang-tools-$llvm_version
+      clangd-$llvm_version
+      libc++-$llvm_version-dev
+      libc++abi-$llvm_version-dev
+      libclang-$llvm_version-dev
+      libclang-common-$llvm_version-dev
+      libclang1-$llvm_version
+      libfuzzer-$llvm_version-dev
+      libllvm$llvm_version
+      lld-$llvm_version
+      lldb-$llvm_version
+      llvm-$llvm_version
+      llvm-$llvm_version-dev
+      llvm-$llvm_version-doc
+      llvm-$llvm_version-examples
+      llvm-$llvm_version-runtime
+      python3-clang-$llvm_version
+  )
 
-packages=(
-    clang-$CLANG_VERSION
-    clang-$CLANG_VERSION-doc
-    clang-format-$CLANG_VERSION
-    clang-tools-$CLANG_VERSION
-    clangd-$CLANG_VERSION
-    libc++-$CLANG_VERSION-dev
-    libc++abi-$CLANG_VERSION-dev
-    libclang-$CLANG_VERSION-dev
-    libclang-common-$CLANG_VERSION-dev
-    libclang1-$CLANG_VERSION
-    libfuzzer-$CLANG_VERSION-dev
-    libllvm$CLANG_VERSION
-    lld-$CLANG_VERSION
-    lldb-$CLANG_VERSION
-    llvm-$CLANG_VERSION
-    llvm-$CLANG_VERSION-dev
-    llvm-$CLANG_VERSION-doc
-    llvm-$CLANG_VERSION-examples
-    llvm-$CLANG_VERSION-runtime
-    python3-clang-$CLANG_VERSION
-)
-
-apt-get install -y "${packages[@]}"
+  apt-get install -y "${packages[@]}"
+done
