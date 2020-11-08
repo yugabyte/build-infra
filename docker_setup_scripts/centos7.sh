@@ -77,5 +77,6 @@ bash /tmp/yb_docker_setup_scripts/centos_install_python3_from_source.sh
 echo "::endgroup::"
 
 bash /tmp/yb_docker_setup_scripts/perform_common_setup.sh
+bash /tmp/yb_docker_setup_scripts/centos_install_custom_built_llvm.sh
 
 rm -rf /tmp/yb_docker_setup_scripts
