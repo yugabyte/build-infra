@@ -74,7 +74,7 @@ for devtoolset_index in "${DEVTOOLSETS_TO_INSTALL[@]}"; do
          "at $enable_script." >&2
     exit 1
   fi
-fi
+done
 echo "::endgroup::"
 
 echo "::group::Installig Golang"
