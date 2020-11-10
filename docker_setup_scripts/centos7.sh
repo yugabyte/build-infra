@@ -2,6 +2,61 @@
 
 set -euo pipefail
 
+packages=(
+  autoconf
+  bind-utils
+  bzip2
+  bzip2-devel
+  ccache
+  curl
+  epel-release
+  gcc
+  gcc-c++
+  gdbm-devel
+  git
+  java-1.8.0-openjdk
+  java-1.8.0-openjdk-devel
+  less
+  libatomic
+  libffi-devel
+  libselinux-python
+  libsemanage-python
+  libsqlite3x-devel
+  libtool
+  openssl-devel
+  openssl-devel
+  patch
+  perl-Digest
+  php
+  php-common
+  php-curl
+  python-devel
+  python2-pip
+  readline-devel
+  ruby
+  ruby-devel
+  sudo
+  vim
+  wget
+  which
+  xz
+)
+
+readonly PER_DEVTOOLSET_PACKAGE_SUFFIXES=(
+  libatomic-devel
+  libasan-devel
+  libtsan-devel
+  libubsan-devel
+)
+
+readonly DEVTOOLSETS_TO_INSTALL=( 8 9 )
+for devtoolset_index in "${DEVTOOLSETS_TO_INSTALL[@]}"; do
+  packages+=( devtoolset-${devtoolset_index} )
+  for package_suffix in "${PER_DEVTOOLSET_PACKAGE_SUFFIXES[@]}"; do
+    packages+=( devtoolset-${devtoolset_index}-${package_suffix} )
+  done
+done
+
 yum upgrade -y
 yum install -y epel-release
 yum groupinstall -y 'Development Tools'
@@ -9,57 +64,17 @@ yum groupinstall -y 'Development Tools'
 # We have to install centos-release-scl before installing devtoolset-8.
 yum install -y centos-release-scl
 
-packages=(
-    autoconf
-    bind-utils
-    bzip2
-    bzip2-devel
-    ccache
-    curl
-    devtoolset-8
-    devtoolset-8-libatomic-devel
-    devtoolset-9
-    devtoolset-9-libatomic-devel
-    epel-release
-    gcc
-    gcc-c++
-    gdbm-devel
-    git
-    java-1.8.0-openjdk
-    java-1.8.0-openjdk-devel
-    less
-    libatomic
-    libffi-devel
-    libselinux-python
-    libsemanage-python
-    libsqlite3x-devel
-    libtool
-    openssl-devel
-    openssl-devel
-    patch
-    perl-Digest
-    php
-    php-common
-    php-curl
-    python-devel
-    python2-pip
-    readline-devel
-    ruby
-    ruby-devel
-    sudo
-    vim
-    wget
-    which
-    xz
-)
-
 echo "::group::Installing CentOS packages"
-yum install -y "${packages[@]}"
+( set -x; yum install -y "${packages[@]}" )
 
-if [[ ! -f /opt/rh/devtoolset-8/enable ]]; then
-  echo "devtoolset-8 did not get installed" >&2
-  exit 1
-fi
+for devtoolset_index in "${DEVTOOLSETS_TO_INSTALL[@]}"; do
+  enable_script=/opt/rh/devtoolset-${devtoolset_index}/enable
+  if [[ ! -f $enable_script ]]; then
+    echo "devtoolset-${devtoolset_index} did not get installed. The script to enable it not found" \
+         "at $enable_script." >&2
+    exit 1
+  fi
+done
 echo "::endgroup::"
 
 echo "::group::Installig Golang"
