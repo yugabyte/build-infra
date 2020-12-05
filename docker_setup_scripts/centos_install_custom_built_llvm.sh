@@ -5,7 +5,8 @@ readonly URL_PREFIX=https://github.com/yugabyte/build-clang/releases/download
 
 llvm_major_version=11
 llvm_tarball_version_suffix=1604022592
-llvm_tarball_version=v${llvm_major_version}-${llvm_tarball_version_suffix}
+llvm_full_version=$llvm_major_version.0.0
+llvm_tarball_version=v${llvm_full_version}-${llvm_tarball_version_suffix}
 llvm_dir_name=llvm-$llvm_tarball_version
 tarball_name=$llvm_dir_name.tar.gz
 url=$URL_PREFIX/$llvm_tarball_version/$tarball_name
