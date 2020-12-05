@@ -1,4 +1,4 @@
-#!/usr/bin/env
+#!/usr/bin/env bash
 
 set -euo pipefail
 readonly URL_PREFIX=https://github.com/yugabyte/build-clang/releases/download
@@ -11,10 +11,11 @@ llvm_dir_name=yb-llvm-$llvm_tarball_version
 tarball_name=$llvm_dir_name.tar.gz
 url=$URL_PREFIX/$llvm_tarball_version/$tarball_name
 cd /opt/yb-build/llvm
-wget "$url"
 
+curl -sLO "$url"
 actual_sha256sum=$( sha256sum "$tarball_name" | awk '{print $1}')
-expected_sha256sum="85618e7fb91e80a37c26e02e7113d5fbbd4edc50779ca78b0170d6f7911f03b4"
+expected_sha256sum=$( curl -sL "$url.sha256" | awk '{print $1}' )
+
 if [[ $actual_sha256sum != $expected_sha256sum ]]; then
   echo "Checksum mismatch for $tarball_name: expected $expected_sha256sum," \
        "got $actual_sha256sum" >&2
@@ -32,10 +33,7 @@ fi
 symlink_parent_dir=/usr/local/bin
 mkdir -p "$symlink_parent_dir"
 
-readonly LLVM_TOOLS_TO_LINK=(
-    clang
-    clang++
-)
+readonly LLVM_TOOLS_TO_LINK=( clang clang++ )
 
 for tool_name in "${LLVM_TOOLS_TO_LINK[@]}"; do
   tool_path=$installed_llvm_bin_dir/$tool_name
