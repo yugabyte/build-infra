@@ -153,9 +153,8 @@ install_golang() {
     rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
     curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
     end_group
-  else
-    yum install -y golang
   fi
+  yum install -y golang
 }
 
 # -------------------------------------------------------------------------------------------------
