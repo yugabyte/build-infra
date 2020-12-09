@@ -134,14 +134,16 @@ install_packages() {
   start_group "Installing CentOS packages"
   ( set -x; yum install -y "${packages[@]}" )
 
-  for devtoolset_index in "${CENTOS7_DEVTOOLSETS_TO_INSTALL[@]}"; do
-    enable_script=/opt/rh/devtoolset-${devtoolset_index}/enable
-    if [[ ! -f $enable_script ]]; then
-      echo "devtoolset-${devtoolset_index} did not get installed. The script to enable it not " \
-           "found at $enable_script." >&2
-      exit 1
-    fi
-  done
+  if [[ $centos_major_version -eq 7 ]]; then
+    for devtoolset_index in "${CENTOS7_DEVTOOLSETS_TO_INSTALL[@]}"; do
+      enable_script=/opt/rh/devtoolset-${devtoolset_index}/enable
+      if [[ ! -f $enable_script ]]; then
+        echo "devtoolset-${devtoolset_index} did not get installed. The script to enable it not " \
+            "found at $enable_script." >&2
+        exit 1
+      fi
+    done
+  fi
   end_group
 }
 
