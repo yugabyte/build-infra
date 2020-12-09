@@ -73,7 +73,7 @@ detect_centos_version() {
   redhat_release_str=$(</etc/redhat-release)
   if [[ $redhat_release_str =~ ^CentOS\ Linux\ release\ ([0-9]+)[.].* ]]; then
     centos_major_version=${BASH_REMATCH[1]}
-    if [[ ! $centos_major_version =~ ^[89]$ ]]; then
+    if [[ ! $centos_major_version =~ ^[78]$ ]]; then
       echo "Unsupported major version of CentOS: $centos_major_version" >&2
       exit 1
     fi
