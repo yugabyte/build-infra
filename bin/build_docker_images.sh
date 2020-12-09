@@ -40,6 +40,7 @@ fi
 image_name=""
 should_push=false
 tag_prefix=""
+tag_output_file=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
