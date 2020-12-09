@@ -23,7 +23,6 @@ readonly CENTOS_COMMON_PACKAGES=(
   bzip2-devel
   ccache
   curl
-  epel-release
   gcc
   gcc-c++
   gdbm-devel
@@ -44,7 +43,7 @@ readonly CENTOS_COMMON_PACKAGES=(
   php
   php-common
   php-curl
-  python-devel
+  python2
   python2-pip
   readline-devel
   ruby
@@ -54,6 +53,16 @@ readonly CENTOS_COMMON_PACKAGES=(
   wget
   which
   xz
+)
+
+readonly CENTOS7_ONLY_PACKAGES=(
+  python-devel
+)
+
+readonly CENTOS8_ONLY_PACKAGES=(
+  python38
+  python38-devel
+  python38-pip
 )
 
 # -----------------------------------------------------------------------------
@@ -112,6 +121,12 @@ install_packages() {
   if [[ $centos_major_version -eq 7 ]]; then
     # We have to install centos-release-scl before installing devtoolset-8.
     yum install -y centos-release-scl
+
+    packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
+  fi
+
+  if [[ $centos_major_version -eq 8 ]]; then
+    packages+=( "${CENTOS8_ONLY_PACKAGES[@]}" )
   fi
 
   start_group "Installing CentOS packages"
