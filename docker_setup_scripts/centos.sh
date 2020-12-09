@@ -145,6 +145,17 @@ install_packages() {
   end_group
 }
 
+install_golang() {
+  if [[ $centos_major_version -eq 7 ]]; then
+    start_group "Installig Golang on CentOS 7"
+    rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
+    curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
+    end_group
+  else
+    yum install -y golang
+  fi
+}
+
 # -------------------------------------------------------------------------------------------------
 # Main script
 # -------------------------------------------------------------------------------------------------
@@ -153,11 +164,7 @@ detect_centos_version
 
 install_packages
 
-start_group "Installig Golang"
-rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
-curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
-yum install -y golang
-end_group
+install_golang
 
 start_group "Yum cleanup"
 yum clean all
