@@ -32,8 +32,6 @@ readonly CENTOS_COMMON_PACKAGES=(
   less
   libatomic
   libffi-devel
-  libselinux-python
-  libsemanage-python
   libsqlite3x-devel
   libtool
   openssl-devel
@@ -57,12 +55,16 @@ readonly CENTOS_COMMON_PACKAGES=(
 
 readonly CENTOS7_ONLY_PACKAGES=(
   python-devel
+  libselinux-python
+  libsemanage-python
 )
 
 readonly CENTOS8_ONLY_PACKAGES=(
   python38
   python38-devel
   python38-pip
+  libselinux
+  libselinux-devel
 )
 
 # -----------------------------------------------------------------------------
