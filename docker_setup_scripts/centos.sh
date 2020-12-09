@@ -101,9 +101,9 @@ install_packages() {
   if [[ $centos_major_version -eq 7 ]]; then
     local devtoolset_index
     for devtoolset_index in "${CENTOS7_DEVTOOLSETS_TO_INSTALL[@]}"; do
-      packages+=( devtoolset-${devtoolset_index} )
+      packages+=( "devtoolset-$devtoolset_index")
       for package_suffix in "${CENTOS7_PER_DEVTOOLSET_PACKAGE_SUFFIXES[@]}"; do
-        packages+=( devtoolset-${devtoolset_index}-${package_suffix} )
+        packages+=( "devtoolset-${devtoolset_index}-${package_suffix}" )
       done
     done
   fi
@@ -134,7 +134,7 @@ install_packages() {
   start_group "Installing CentOS packages"
   ( set -x; yum install -y "${packages[@]}" )
 
-  for devtoolset_index in "${DEVTOOLSETS_TO_INSTALL[@]}"; do
+  for devtoolset_index in "${CENTOS7_DEVTOOLSETS_TO_INSTALL[@]}"; do
     enable_script=/opt/rh/devtoolset-${devtoolset_index}/enable
     if [[ ! -f $enable_script ]]; then
       echo "devtoolset-${devtoolset_index} did not get installed. The script to enable it not " \

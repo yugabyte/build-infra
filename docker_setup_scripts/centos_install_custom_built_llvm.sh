@@ -16,7 +16,7 @@ curl -sLO "$url"
 actual_sha256sum=$( sha256sum "$tarball_name" | awk '{print $1}')
 expected_sha256sum=$( curl -sL "$url.sha256" | awk '{print $1}' )
 
-if [[ $actual_sha256sum != $expected_sha256sum ]]; then
+if [[ $actual_sha256sum != "$expected_sha256sum" ]]; then
   echo "Checksum mismatch for $tarball_name: expected $expected_sha256sum," \
        "got $actual_sha256sum" >&2
   exit 1
