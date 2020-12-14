@@ -30,6 +30,7 @@ jobs:
       matrix:
         image_name:
           - centos7
+          - centos8
           - ubuntu1804
 
     runs-on: ubuntu-latest

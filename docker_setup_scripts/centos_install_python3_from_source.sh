@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC1091
 source scl_source enable devtoolset-8
+
 set -euo pipefail -x
 
 python_tmp_dir=/tmp/python_install_from_source
@@ -13,7 +15,7 @@ python_src_tarball_url="https://www.python.org/ftp/python/$python_version/$pytho
 wget "$python_src_tarball_url"
 actual_md5sum=$( md5sum "$python_src_tarball_name" | awk '{print $1}')
 expected_md5sum="f9f3768f757e34b342dbc06b41cbc844"
-if [[ $actual_md5sum != $expected_md5sum ]]; then
+if [[ $actual_md5sum != "$expected_md5sum" ]]; then
   echo >&2 "Checksum mismatch: actual=$actual_md5sum, expected=$expected_md5sum"
 fi
 python_build_dir="$python_tmp_dir/$python_src_dir_name"

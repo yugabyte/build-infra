@@ -18,11 +18,12 @@ install_maven() {
   mkdir -p "$maven_tmp_dir"
   (
     cd "$maven_tmp_dir"
-    rm -rf "$maven_tmp_dir/"*
+    rm -rf "${maven_tmp_dir:?}/"*
     curl -O "$url"
-    local actual_sha256sum=$( sha256sum "$tarball_name" | awk '{print $1}' )
+    local actual_sha256sum
+    actual_sha256sum=$( sha256sum "$tarball_name" | awk '{print $1}' )
     local expected_sha256sum=26ad91d751b3a9a53087aefa743f4e16a17741d3915b219cf74112bf87a438c5
-    if [[ $actual_sha256sum != $expected_sha256sum ]]; then
+    if [[ $actual_sha256sum != "$expected_sha256sum" ]]; then
       echo "Invalid checksum: $actual_sha256sum, expectded: $expected_sha256sum" >&2
       exit 1
     fi
