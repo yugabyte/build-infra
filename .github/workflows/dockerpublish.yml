@@ -32,6 +32,7 @@ jobs:
           - centos7
           - centos8
           - ubuntu1804
+          - ubuntu2004
 
     runs-on: ubuntu-latest
     if: >
