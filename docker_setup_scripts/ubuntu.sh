@@ -3,8 +3,8 @@
 set -euo pipefail
 
 echo "::group::apt update"
-apt-get update
-apt-get dist-upgrade -y
+apt update
+apt dist-upgrade -y
 echo "::endgroup::"
 
 . /etc/lsb-release
@@ -42,8 +42,6 @@ packages=(
     wget
     xz-utils
     groff-base
-    gcc-8
-    g++-8
     libasan5
     libtsan0
 )
@@ -52,11 +50,18 @@ if [[ $ubuntu_major_version -le 18 ]]; then
   packages+=(
     python-pip
     python-dev
+    gcc-8
+    g++-8
   )
 fi
 
+export LANG=en_US.UTF-8
+
 echo "::group::Installing Ubuntu packages"
-apt-get install -y "${packages[@]}"
+for package in "${packages[@]}"; do
+  echo "Installing package: $package"
+  apt install -y "$package"
+done
 echo "::endgroup::"
 
 echo "::group::Installing LLVM/Clang packages"
@@ -64,8 +69,8 @@ bash /tmp/yb_docker_setup_scripts/ubuntu_install_llvm_packages.sh
 echo "::endgroup::"
 
 echo "::group::apt cleanup"
-apt-get -y clean
-apt-get -y autoremove
+apt -y clean
+apt -y autoremove
 echo "::endgroup::"
 
 locale-gen en_US.UTF-8
