@@ -3,8 +3,8 @@
 set -euo pipefail
 
 echo "::group::apt update"
-apt update
-apt dist-upgrade -y
+apt-get update
+apt-get dist-upgrade -y
 echo "::endgroup::"
 
 . /etc/lsb-release
@@ -19,13 +19,16 @@ packages=(
     flex
     git
     golang
+    groff-base
     less
+    libasan5
     libbz2-dev
     libicu-dev
     libncurses5-dev
     libreadline-dev
     libssl-dev
     libtool
+    libtsan0
     locales
     maven
     openjdk-8-jdk-headless
@@ -36,14 +39,12 @@ packages=(
     python3-wheel
     rsync
     sudo
+    tzdata
     unzip
     uuid-dev
     vim
     wget
     xz-utils
-    groff-base
-    libasan5
-    libtsan0
 )
 
 if [[ $ubuntu_major_version -le 18 ]]; then
@@ -56,11 +57,20 @@ if [[ $ubuntu_major_version -le 18 ]]; then
 fi
 
 export LANG=en_US.UTF-8
+export DEBIAN_FRONTEND=noninteractive
 
 echo "::group::Installing Ubuntu packages"
 for package in "${packages[@]}"; do
-  echo "Installing package: $package"
-  apt install -y "$package"
+  echo "------------------------------------------------------------------------------------------"
+  echo "Installing package $package and its dependencies"
+  echo "------------------------------------------------------------------------------------------"
+  echo
+  apt-get install -y "$package"
+  echo
+  echo "------------------------------------------------------------------------------------------"
+  echo "Finished installing package $package and its dependencies"
+  echo "------------------------------------------------------------------------------------------"
+  echo
 done
 echo "::endgroup::"
 
@@ -69,8 +79,8 @@ bash /tmp/yb_docker_setup_scripts/ubuntu_install_llvm_packages.sh
 echo "::endgroup::"
 
 echo "::group::apt cleanup"
-apt -y clean
-apt -y autoremove
+apt-get -y clean
+apt-get -y autoremove
 echo "::endgroup::"
 
 locale-gen en_US.UTF-8
