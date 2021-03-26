@@ -7,6 +7,9 @@ apt-get update
 apt-get dist-upgrade -y
 echo "::endgroup::"
 
+. /etc/lsb-release
+ubuntu_major_version=${DISTRIB_RELEASE%%.*}
+
 packages=(
     apt-file
     apt-utils
@@ -27,8 +30,6 @@ packages=(
     maven
     openjdk-8-jdk-headless
     pkg-config
-    python-dev
-    python-pip
     python3-dev
     python3-pip
     python3-venv
@@ -46,6 +47,13 @@ packages=(
     libasan5
     libtsan0
 )
+
+if [[ $ubuntu_major_version -le 18 ]]; then
+  packages+=(
+    python-pip
+    python-dev
+  )
+fi
 
 echo "::group::Installing Ubuntu packages"
 apt-get install -y "${packages[@]}"
