@@ -44,8 +44,4 @@ install_maven() {
   sudo ln -s "$mvn_binary_path" "$mvn_link_path"
 }
 
-if mvn --version | grep -q "Apache Maven $MAVEN_VERSION "; then
-  echo "Maven $MAVEN_VERSION is already installed"
-else
-  install_maven
-fi
+install_maven
