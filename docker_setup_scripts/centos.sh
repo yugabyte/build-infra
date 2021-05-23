@@ -6,14 +6,21 @@ set -euo pipefail
 # Constants
 # -----------------------------------------------------------------------------
 
-readonly CENTOS7_PER_DEVTOOLSET_PACKAGE_SUFFIXES=(
+readonly TOOLSET_PACKAGE_SUFFIXES_COMMON=(
   libatomic-devel
   libasan-devel
   libtsan-devel
   libubsan-devel
 )
 
-readonly CENTOS7_DEVTOOLSETS_TO_INSTALL=( 8 9 )
+readonly TOOLSET_PACKAGE_SUFFIXES_CENTOS8=(
+  toolchain
+  gcc
+  gcc-c++
+)
+
+readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL=( 8 9 )
+readonly CENTOS8_GCC_TOOLSETS_TO_INSTALL=( 9 )
 
 # Packages installed on all supported versions of CentOS.
 readonly CENTOS_COMMON_PACKAGES=(
@@ -27,8 +34,10 @@ readonly CENTOS_COMMON_PACKAGES=(
   gcc-c++
   gdbm-devel
   git
+  glibc-all-langpacks
   java-1.8.0-openjdk
   java-1.8.0-openjdk-devel
+  langpacks-en
   less
   libatomic
   libffi-devel
@@ -60,16 +69,17 @@ readonly CENTOS7_ONLY_PACKAGES=(
 )
 
 readonly CENTOS8_ONLY_PACKAGES=(
+  libselinux
+  libselinux-devel
+  llvm-toolset
   python38
   python38-devel
   python38-pip
-  libselinux
-  libselinux-devel
 )
 
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 # Functions
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------
 
 start_group() {
   echo "::group::$*"
@@ -80,16 +90,11 @@ end_group() {
 }
 
 detect_centos_version() {
-  local redhat_release_str
-  redhat_release_str=$(</etc/redhat-release)
-  if [[ $redhat_release_str =~ ^CentOS\ Linux\ release\ ([0-9]+)[.].* ]]; then
-    centos_major_version=${BASH_REMATCH[1]}
-    if [[ ! $centos_major_version =~ ^[78]$ ]]; then
-      echo "Unsupported major version of CentOS: $centos_major_version" >&2
-      exit 1
-    fi
-  else
-    echo "Could not parse /etc/redhat-release: $redhat_release_str" >&2
+  centos_major_version=$(
+    grep -E ^VERSION= /etc/os-release | sed 's/VERSION=//; s/"//g' | awk '{print $1}'
+  )
+  if [[ ! $centos_major_version =~ ^[78]$ ]]; then
+    echo "Unsupported major version of CentOS: $centos_major_version (from /etc/os-release)" >&2
     exit 1
   fi
   readonly centos_major_version
@@ -98,52 +103,66 @@ detect_centos_version() {
 install_packages() {
   local packages=( "${CENTOS_COMMON_PACKAGES[@]}" )
 
+  local toolset_prefix
+  local gcc_toolsets_to_install
+  local package_manager
+  local toolset_package_suffixes=( "${TOOLSET_PACKAGE_SUFFIXES_COMMON[@]}" )
   if [[ $centos_major_version -eq 7 ]]; then
-    local devtoolset_index
-    for devtoolset_index in "${CENTOS7_DEVTOOLSETS_TO_INSTALL[@]}"; do
-      packages+=( "devtoolset-$devtoolset_index")
-      for package_suffix in "${CENTOS7_PER_DEVTOOLSET_PACKAGE_SUFFIXES[@]}"; do
-        packages+=( "devtoolset-${devtoolset_index}-${package_suffix}" )
-      done
-    done
+    toolset_prefix="devtoolset"
+    gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL[@]}" )
+    package_manager=yum
+    packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
+  elif [[ $centos_major_version -eq 8 ]]; then
+    toolset_prefix="gcc-toolset"
+    gcc_toolsets_to_install=( "${CENTOS8_GCC_TOOLSETS_TO_INSTALL[@]}" )
+    toolset_package_suffixes+=( "${TOOLSET_PACKAGE_SUFFIXES_CENTOS8[@]}" )
+    package_manager=dnf
+    packages+=( "${CENTOS8_ONLY_PACKAGES[@]}" )
+  else
+    echo "Unknown CentOS major version: $centos_major_version" >&2
+    exit 1
   fi
 
+  local gcc_toolset_version
+  for gcc_toolset_version in "${gcc_toolsets_to_install[@]}"; do
+    local versioned_prefix="${toolset_prefix}-${gcc_toolset_version}"
+    packages+=( "${versioned_prefix}" )
+    for package_suffix in "${toolset_package_suffixes[@]}"; do
+      packages+=( "${versioned_prefix}-${package_suffix}" )
+    done
+  done
+
   start_group "Upgrading existing packages"
-  yum upgrade -y
+  "$package_manager" upgrade -y
   end_group
 
   start_group "Installing epel-release"
-  yum install -y epel-release
+  "$package_manager" install -y epel-release
   end_group
 
   start_group "Installing development tools"
-  yum groupinstall -y 'Development Tools'
+  "$package_manager" groupinstall -y 'Development Tools'
   end_group
 
   if [[ $centos_major_version -eq 7 ]]; then
-    # We have to install centos-release-scl before installing devtoolset-8.
-    yum install -y centos-release-scl
-
-    packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
+    # We have to install centos-release-scl before installing devtoolsets.
+    "$package_manager" install -y centos-release-scl
   fi
 
-  if [[ $centos_major_version -eq 8 ]]; then
-    packages+=( "${CENTOS8_ONLY_PACKAGES[@]}" )
-  fi
+  start_group "Installing CentOS $centos_major_version packages"
+  (
+    set -x
+    "${package_manager}" install -y "${packages[@]}"
+  )
 
-  start_group "Installing CentOS packages"
-  ( set -x; yum install -y "${packages[@]}" )
-
-  if [[ $centos_major_version -eq 7 ]]; then
-    for devtoolset_index in "${CENTOS7_DEVTOOLSETS_TO_INSTALL[@]}"; do
-      enable_script=/opt/rh/devtoolset-${devtoolset_index}/enable
-      if [[ ! -f $enable_script ]]; then
-        echo "devtoolset-${devtoolset_index} did not get installed. The script to enable it not " \
-            "found at $enable_script." >&2
-        exit 1
-      fi
-    done
-  fi
+  for devtoolset_index in "${gcc_toolsets_to_install[@]}"; do
+    enable_script=/opt/rh/${toolset_prefix}-${devtoolset_index}/enable
+    if [[ ! -f $enable_script ]]; then
+      echo "${toolset_prefix}-${devtoolset_index} did not get installed." \
+           "The script to enable it not found at $enable_script." >&2
+      exit 1
+    fi
+  done
   end_group
 }
 
@@ -178,6 +197,8 @@ if [[ $centos_major_version -eq 7 ]]; then
 fi
 
 bash /tmp/yb_docker_setup_scripts/perform_common_setup.sh
-bash /tmp/yb_docker_setup_scripts/centos_install_custom_built_llvm.sh
+if [[ $centos_major_version -eq 7 ]]; then
+  bash /tmp/yb_docker_setup_scripts/centos_install_custom_built_llvm.sh
+fi
 
 rm -rf /tmp/yb_docker_setup_scripts
