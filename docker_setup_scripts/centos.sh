@@ -53,6 +53,7 @@ readonly CENTOS_COMMON_PACKAGES=(
   python2
   python2-pip
   readline-devel
+  rsync
   ruby
   ruby-devel
   sudo
