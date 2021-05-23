@@ -2,8 +2,10 @@
 
 set -euo pipefail -x
 
+readonly MAVEN_VERSION=3.6.3
+
 install_maven() {
-  local version=3.6.3
+  local version=$MAVEN_VERSION
   local maven_dir_name=apache-maven-$version
   local tarball_name=$maven_dir_name-bin.tar.gz
   local url="https://apache.osuosl.org/maven/maven-3/$version/binaries/$tarball_name"
@@ -42,4 +44,8 @@ install_maven() {
   sudo ln -s "$mvn_binary_path" "$mvn_link_path"
 }
 
-install_maven
+if mvn --version | grep -q "Apache Maven $MAVEN_VERSION "; then
+  echo "Maven $MAVEN_VERSION is already installed"
+else
+  install_maven
+fi
