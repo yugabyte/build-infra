@@ -35,7 +35,10 @@ yb_debian_init() {
 }
 
 yb_start_group() {
-  echo "echo ::group::$1"
+  if [[ $# -ne 1 ]]; then
+    echo >&2 "The yb_start_group requires exactly one parameter"
+  fi
+  echo "::group::$1"
 }
 
 yb_end_group() {
