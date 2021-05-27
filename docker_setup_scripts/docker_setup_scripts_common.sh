@@ -99,7 +99,7 @@ yb_perform_common_setup() {
   bash "$yb_build_infra_scripts_dir/perform_common_setup.sh"
 }
 
-yb_debian_configure_and_install() {
+yb_debian_configure_and_install_packages() {
   local packages=( "$@" )
 
   yb_debian_init
