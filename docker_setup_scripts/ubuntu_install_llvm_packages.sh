@@ -1,8 +1,8 @@
-#!/u  sr/bin/env bash
+#!/usr/bin/env bash
 
 set -euo pipefail -x
 
-readonly LLVM_VERSIONS=( 10 11 )
+readonly LLVM_VERSIONS=( 10 11 12 )
 
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 
