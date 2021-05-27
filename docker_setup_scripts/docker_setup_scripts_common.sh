@@ -50,4 +50,46 @@ yb_apt_cleanup() {
   yb_end_group
 }
 
+yb_heading() {
+  echo
+  echo "------------------------------------------------------------------------------------------"
+  echo "$*"
+  echo "------------------------------------------------------------------------------------------"
+  echo
+}
+
+yb_apt_install_packages_separately() {
+  yb_start_group "Installing Debian/Ubuntu packages"
+  local failed_packages=()
+  local num_succeeded=0
+  local num_failed=0
+  for package in "$@"; do
+    yb_heading "Installing package $package and its dependencies"
+    if apt-get install -y "$package"; then
+      (( num_succeeded+=1 ))
+    else
+      failed_packages+=( "$package" )
+      (( num_failed+=1 ))
+    fi
+    yb_heading "Finished installing package $package and its dependencies"
+  done
+  yb_end_group
+
+  if [[ $num_failed -gt 0 ]]; then
+    echo >&2 "Failed to install packages: ${failed_packages[*]}"
+    return 1
+  fi
+  return 0
+}
+
+yb_debian_install_llvm_packages() {
+  yb_start_group "Installing LLVM/Clang packages"
+  bash "$yb_build_infra_scripts_dir/debian_install_llvm_packages.sh"
+  yb_end_group
+}
+
+yb_perform_common_setup() {
+  bash "$yb_build_infra_scripts_dir/perform_common_setup.sh"
+}
+
 readonly yb_build_infra_scripts_dir=$( cd "${BASH_SOURCE[0]%/*}" && pwd )
