@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# shellcheck source=bin/common.sh
-. "${BASH_SOURCE[0]%/*}/common.sh"
+# shellcheck source=bin/yb_build_infra_common.sh
+. "${BASH_SOURCE[0]%/*}/yb_build_infra_common.sh"
 
 IFS=$'\n'
 

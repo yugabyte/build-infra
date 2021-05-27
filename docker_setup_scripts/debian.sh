@@ -5,10 +5,6 @@ set -euo pipefail
 # shellcheck source=docker_setup_scripts/docker_setup_scripts_common.sh
 . "${BASH_SOURCE%/*}/docker_setup_scripts_common.sh"
 
-# shellcheck disable=SC1091
-. /etc/lsb-release
-ubuntu_major_version=${DISTRIB_RELEASE%%.*}
-
 packages=(
   apt-file
   apt-utils
@@ -30,7 +26,6 @@ packages=(
   libtsan0
   locales
   maven
-  openjdk-8-jdk-headless
   pkg-config
   python3-dev
   python3-pip
@@ -45,14 +40,5 @@ packages=(
   wget
   xz-utils
 )
-
-if [[ $ubuntu_major_version -le 18 ]]; then
-  packages+=(
-    python-pip
-    python-dev
-    gcc-8
-    g++-8
-  )
-fi
 
 yb_debian_configure_and_install_packages "${packages[@]}"

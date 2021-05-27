@@ -5,14 +5,9 @@ on:
     branches:
       - master
 
-    # Publish `v1.2.3` tags as releases.
-    tags:
-      - v*
-
     paths-ignore:
       - README.md
 
-  # Run tests for any PRs.
   pull_request:
     branches:
       - master
@@ -27,12 +22,14 @@ jobs:
   build:
 
     strategy:
+      fail-fast: false
       matrix:
         image_name:
           - centos7
           - centos8
           - ubuntu1804
           - ubuntu2004
+          - debian10.9
 
     runs-on: ubuntu-latest
     if: >
