@@ -50,4 +50,4 @@ yb_apt_cleanup() {
   yb_end_group
 }
 
-readonly yb_build_infra_scripts_dir=$( cd "${BASH_SOURCE[0]%/*}" && cd .. && pwd )
+readonly yb_build_infra_scripts_dir=$( cd "${BASH_SOURCE[0]%/*}" && pwd )
