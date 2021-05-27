@@ -14,7 +14,6 @@ yb_remove_build_infra_scripts() {
 
 yb_debian_init_locale() {
   # Based on https://serverfault.com/a/894545
-  apt-get update
 
   # Install locales package
   apt-get install -y locales
@@ -102,6 +101,7 @@ yb_perform_common_setup() {
 yb_debian_configure_and_install_packages() {
   local packages=( "$@" )
 
+  yb_apt_get_dist_upgrade
   yb_debian_init
   yb_apt_install_packages_separately "${packages[@]}"
   yb_debian_install_llvm_packages
