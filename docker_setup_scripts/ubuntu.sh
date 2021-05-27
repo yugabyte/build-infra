@@ -5,8 +5,6 @@ set -euo pipefail
 # shellcheck source=docker_setup_scripts/docker_setup_scripts_common.sh
 . "${BASH_SOURCE%/*}/docker_setup_scripts_common.sh"
 
-yb_apt_get_dist_upgrade
-
 # shellcheck disable=SC1091
 . /etc/lsb-release
 ubuntu_major_version=${DISTRIB_RELEASE%%.*}
@@ -57,16 +55,4 @@ if [[ $ubuntu_major_version -le 18 ]]; then
   )
 fi
 
-yb_debian_init_locale
-
-export DEBIAN_FRONTEND=noninteractive
-
-yb_apt_install_packages_separately "${packages[@]}"
-
-yb_debian_install_llvm_packages
-
-yb_apt_cleanup
-
-bash "$yb_build_infra_scripts_dir/perform_common_setup.sh"
-
-yb_remove_build_infra_scripts
+yb_debian_configure_and_install_packages "${packages[@]}"

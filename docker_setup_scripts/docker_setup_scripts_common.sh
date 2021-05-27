@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+readonly yb_build_infra_scripts_dir=$( cd "${BASH_SOURCE[0]%/*}" && pwd )
+
 yb_remove_build_infra_scripts() {
   if [[ $yb_build_infra_scripts_dir =~ ^/tmp/ ]]; then
     ( set -x; rm -rf "$yb_build_infra_scripts_dir" )
@@ -26,6 +28,11 @@ yb_debian_init_locale() {
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
   export LANGUAGE=en_US.UTF-8
+}
+
+yb_debian_init() {
+  export DEBIAN_FRONTEND=noninteractive
+  yb_debian_init_locale
 }
 
 yb_start_group() {
@@ -92,4 +99,12 @@ yb_perform_common_setup() {
   bash "$yb_build_infra_scripts_dir/perform_common_setup.sh"
 }
 
-readonly yb_build_infra_scripts_dir=$( cd "${BASH_SOURCE[0]%/*}" && pwd )
+yb_debian_configure_and_install() {
+  local packages=( "$@" )
+
+  yb_debian_init
+  yb_apt_install_packages_separately "${packages[@]}"
+  yb_debian_install_llvm_packages
+  yb_apt_cleanup
+  yb_remove_build_infra_scripts
+}
