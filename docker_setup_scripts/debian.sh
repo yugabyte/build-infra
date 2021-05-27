@@ -5,14 +5,8 @@ set -euo pipefail
 # shellcheck source=docker_setup_scripts/docker_setup_scripts_common.sh
 . "${BASH_SOURCE%/*}/docker_setup_scripts_common.sh"
 
-yb_start_group "apt update"
-apt-get update
-apt-get dist-upgrade -y
-yb_end_group
-
-# shellcheck disable=SC1091
-. /etc/lsb-release
-ubuntu_major_version=${DISTRIB_RELEASE%%.*}
+yb_apt_get_dist_upgrade
+yb_debian_init_locale
 
 packages=(
     apt-file
@@ -35,7 +29,6 @@ packages=(
     libtsan0
     locales
     maven
-    openjdk-8-jdk-headless
     pkg-config
     python3-dev
     python3-pip
@@ -51,20 +44,9 @@ packages=(
     xz-utils
 )
 
-if [[ $ubuntu_major_version -le 18 ]]; then
-  packages+=(
-    python-pip
-    python-dev
-    gcc-8
-    g++-8
-  )
-fi
-
-yb_debian_init_locale
-
 export DEBIAN_FRONTEND=noninteractive
 
-yb_start_group "Installing Ubuntu packages"
+yb_start_group "Installing Debian packages"
 for package in "${packages[@]}"; do
   echo "------------------------------------------------------------------------------------------"
   echo "Installing package $package and its dependencies"
@@ -80,11 +62,9 @@ done
 yb_end_group
 
 yb_start_group "Installing LLVM/Clang packages"
-bash "$yb_build_infra_scripts_dir/ubuntu_install_llvm_packages.sh"
+bash "$yb_build_infra_scripts_dir/debian_install_llvm_packages.sh"
 yb_end_group
 
 yb_apt_cleanup
-
-bash "$yb_build_infra_scripts_dir/perform_common_setup.sh"
 
 yb_remove_build_infra_scripts

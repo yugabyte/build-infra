@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+# shellcheck source=docker_setup_scripts/docker_setup_scripts_common.sh
+. "${BASH_SOURCE%/*}/docker_setup_scripts_common.sh"
+
 # -----------------------------------------------------------------------------
 # Constants
 # -----------------------------------------------------------------------------
@@ -83,11 +86,11 @@ readonly CENTOS8_ONLY_PACKAGES=(
 # -------------------------------------------------------------------------------------------------
 
 start_group() {
-  echo "::group::$*"
+  yb_start_group "$*"
 }
 
 end_group() {
-  echo "::endgroup::"
+  yb_end_group
 }
 
 detect_centos_version() {
@@ -193,13 +196,12 @@ end_group
 
 if [[ $centos_major_version -eq 7 ]]; then
   start_group "Installing Python 3 from source"
-  bash /tmp/yb_docker_setup_scripts/centos_install_python3_from_source.sh
+  bash "$yb_build_infra_scripts_dir/centos_install_python3_from_source.sh"
   end_group
 fi
 
-bash /tmp/yb_docker_setup_scripts/perform_common_setup.sh
+bash "$yb_build_infra_scripts_dir/perform_common_setup.sh"
 if [[ $centos_major_version -eq 7 ]]; then
-  bash /tmp/yb_docker_setup_scripts/centos_install_custom_built_llvm.sh
+  bash "$yb_build_infra_scripts_dir/centos_install_custom_built_llvm.sh"
 fi
-
-rm -rf /tmp/yb_docker_setup_scripts
+yb_remove_build_infra_scripts

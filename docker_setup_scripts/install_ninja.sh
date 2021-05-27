@@ -13,7 +13,7 @@ curl -L -O --silent \
   https://github.com/ninja-build/ninja/releases/download/v${NINJA_VERSION}/$ARCHIVE_NAME
 expected_sha256=763464859c7ef2ea3a0a10f4df40d2025d3bb9438fcb1228404640410c0ec22d
 actual_sha256=$( sha256sum $ARCHIVE_NAME | awk '{print $1}' )
-if [[ $expected_sha256 != $actual_sha256 ]]; then
+if [[ $expected_sha256 != "$actual_sha256" ]]; then
   echo "Expected $ARCHIVE_NAME SHA256 is $expected_sha256, got $actual_sha256" >&2
   exit 1
 fi

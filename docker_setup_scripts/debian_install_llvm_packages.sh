@@ -1,23 +1,37 @@
 #!/usr/bin/env bash
 
-set -euo pipefail -x
+set -euo pipefail
+
+# shellcheck source=docker_setup_scripts/docker_setup_scripts_common.sh
+. "${BASH_SOURCE%/*}/docker_setup_scripts_common.sh"
 
 readonly LLVM_VERSIONS=( 10 11 12 )
 
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 
-ubuntu_codename=$( . /etc/os-release; echo "$UBUNTU_CODENAME" )
-if [[ -z ${ubuntu_codename:-} ]]; then
+# shellcheck disable=SC1091,SC2153
+codename=$(
+  . /etc/os-release
+  if [[ -n ${UBUNTU_CODENAME:-} ]]; then
+    echo "$UBUNTU_CODENAME"
+  else
+    echo "$VERSION_CODENAME"
+  fi
+)
+
+if [[ -z ${codename:-} ]]; then
   echo >&2 "Failed to get Ubuntu codename"
   exit 1
 fi
 
+echo "Debian/Ubuntu codename: $codename"
+
 for llvm_version in "${LLVM_VERSIONS[@]}"; do
   (
-    echo "deb http://apt.llvm.org/$ubuntu_codename/ \
-llvm-toolchain-$ubuntu_codename-$llvm_version main"
-    echo "deb-src http://apt.llvm.org/$ubuntu_codename/ \
-llvm-toolchain-$ubuntu_codename-$llvm_version main"
+    echo "deb http://apt.llvm.org/$codename/ \
+llvm-toolchain-$codename-$llvm_version main"
+    echo "deb-src http://apt.llvm.org/$codename/ \
+llvm-toolchain-$codename-$llvm_version main"
   ) >"/etc/apt/sources.list.d/llvm$llvm_version.list"
 done
 

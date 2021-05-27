@@ -3,7 +3,10 @@
 # shellcheck disable=SC1091
 source scl_source enable devtoolset-8
 
-set -euo pipefail -x
+set -euo pipefail
+
+# shellcheck source=docker_setup_scripts/docker_setup_scripts_common.sh
+. "${BASH_SOURCE%/*}/docker_setup_scripts_common.sh"
 
 python_tmp_dir=/tmp/python_install_from_source
 mkdir -p "$python_tmp_dir"
