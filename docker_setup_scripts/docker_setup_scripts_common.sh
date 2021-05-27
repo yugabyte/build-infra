@@ -37,7 +37,7 @@ yb_end_group() {
 }
 
 yb_apt_get_dist_upgrade() {
-  yb_start_group
+  yb_start_group "apt-get update and dist-upgrade"
   apt-get update
   apt-get dist-upgrade -y
   yb_end_group

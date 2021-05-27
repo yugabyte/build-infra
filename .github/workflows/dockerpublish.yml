@@ -5,15 +5,10 @@ on:
     branches:
       - master
 
-    # Publish `v1.2.3` tags as releases.
-    tags:
-      - v*
-
     paths-ignore:
       - README.md
 
-  # Run tests for any PRs.
-  pull_request:
+      pull_request:
     branches:
       - master
 
@@ -27,6 +22,7 @@ jobs:
   build:
 
     strategy:
+      fail-fast: false
       matrix:
         image_name:
           - centos7
