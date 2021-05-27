@@ -33,6 +33,7 @@ jobs:
           - centos8
           - ubuntu1804
           - ubuntu2004
+          - debian10.9
 
     runs-on: ubuntu-latest
     if: >
