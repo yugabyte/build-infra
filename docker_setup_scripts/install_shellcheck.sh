@@ -2,7 +2,6 @@
 
 set -euo pipefail -x
 
-
 # Instructions from https://github.com/koalaman/shellcheck
 
 scversion="stable" # or "v0.4.7", or "latest"
