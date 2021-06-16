@@ -109,7 +109,6 @@ yb_debian_configure_and_install_packages() {
   yb_apt_install_packages_separately "${packages[@]}"
   yb_debian_install_llvm_packages
   yb_apt_cleanup
-  yb_remove_build_infra_scripts
 }
 
 yb_create_opt_hierarchy() {
