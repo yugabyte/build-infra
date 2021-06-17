@@ -111,7 +111,7 @@ yb_debian_configure_and_install_packages() {
   yb_apt_cleanup
 }
 
-yb_create_opt_hierarchy() {
+yb_create_opt_yb_build_hierarchy() {
   local dir_name
   local top_level_dir=/opt/yb-build
   mkdir -p "$top_level_dir"
@@ -186,6 +186,7 @@ yb_perform_os_independent_steps() {
   yb_install_hub_tool
   yb_install_shellcheck
   yb_install_maven
+  yb_create_opt_yb_build_hierarchy
 }
 
 yb_yum_cleanup() {

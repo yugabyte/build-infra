@@ -10,6 +10,7 @@ llvm_tarball_version=v${llvm_full_version}-${llvm_tarball_version_suffix}
 llvm_dir_name=yb-llvm-$llvm_tarball_version
 tarball_name=$llvm_dir_name.tar.gz
 url=$URL_PREFIX/$llvm_tarball_version/$tarball_name
+mkdir -p /opt/yb-build/llvm
 cd /opt/yb-build/llvm
 
 curl -sLO "$url"
