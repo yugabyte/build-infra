@@ -171,13 +171,13 @@ install_packages() {
 }
 
 install_golang() {
+  start_group "Installing Golang"
   if [[ $centos_major_version -eq 7 ]]; then
-    start_group "Installig Golang on CentOS 7"
     rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
     curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
-    end_group
   fi
   yum install -y golang
+  end_group
 }
 
 # -------------------------------------------------------------------------------------------------
@@ -190,18 +190,16 @@ install_packages
 
 install_golang
 
-start_group "Yum cleanup"
-yum clean all
-end_group
+yb_yum_cleanup
+
+yb_perform_os_independent_steps
+
+yb_install_ninja_from_source
+yb_install_cmake_from_source
 
 if [[ $centos_major_version -eq 7 ]]; then
-  start_group "Installing Python 3 from source"
-  bash "$yb_build_infra_scripts_dir/centos_install_python3_from_source.sh"
-  end_group
+  yb_install_python3_from_source
+  yb_install_custom_built_llvm
 fi
 
-bash "$yb_build_infra_scripts_dir/perform_common_setup.sh"
-if [[ $centos_major_version -eq 7 ]]; then
-  bash "$yb_build_infra_scripts_dir/centos_install_custom_built_llvm.sh"
-fi
 yb_remove_build_infra_scripts

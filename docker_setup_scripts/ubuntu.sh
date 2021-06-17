@@ -14,6 +14,7 @@ packages=(
   apt-utils
   automake
   bison
+  cmake
   curl
   flex
   git
@@ -30,6 +31,7 @@ packages=(
   libtsan0
   locales
   maven
+  ninja-build
   openjdk-8-jdk-headless
   pkg-config
   python3-dev
@@ -56,3 +58,5 @@ if [[ $ubuntu_major_version -le 18 ]]; then
 fi
 
 yb_debian_configure_and_install_packages "${packages[@]}"
+yb_perform_os_independent_steps
+yb_remove_build_infra_scripts

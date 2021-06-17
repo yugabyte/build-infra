@@ -109,5 +109,88 @@ yb_debian_configure_and_install_packages() {
   yb_apt_install_packages_separately "${packages[@]}"
   yb_debian_install_llvm_packages
   yb_apt_cleanup
-  yb_remove_build_infra_scripts
+}
+
+yb_create_opt_yb_build_hierarchy() {
+  local dir_name
+  local top_level_dir=/opt/yb-build
+  mkdir -p "$top_level_dir"
+  chmod 777 "$top_level_dir"
+
+  for dir_name in brew download_cache thirdparty tmp llvm; do
+    dir_path=$top_level_dir/$dir_name
+    (
+      set -x
+      mkdir -p "$dir_path"
+      chmod 777 "$dir_path"
+    )
+  done
+}
+
+yb_create_yugabyteci_user() {
+  yb_start_group "Creating the yugabyteci user"
+  if [[ $OSTYPE == linux* ]]; then
+    if [[ -f /etc/redhat-release ]]; then
+      adduser yugabyteci
+    else
+      adduser --disabled-password --gecos "" yugabyteci
+    fi
+  fi
+  yb_end_group
+}
+
+yb_install_hub_tool() {
+  yb_start_group "Installing the hub tool for interacting with GitHub"
+  bash "$yb_build_infra_scripts_dir/install_hub_tool.sh"
+  yb_end_group
+}
+
+yb_install_ninja_from_source() {
+  yb_start_group "Instaling the Ninja build system"
+  bash "$yb_build_infra_scripts_dir/install_ninja.sh"
+  yb_end_group
+}
+
+yb_install_cmake_from_source() {
+  yb_start_group "Installing CMake"
+  bash "$yb_build_infra_scripts_dir/install_cmake.sh"
+  yb_end_group
+}
+
+yb_install_shellcheck() {
+  yb_start_group "Installing shellcheck"
+  bash "$yb_build_infra_scripts_dir/install_shellcheck.sh"
+  yb_end_group
+}
+
+yb_install_maven() {
+  yb_start_group "Installing Apache Maven"
+  bash "$yb_build_infra_scripts_dir/install_maven.sh"
+  yb_end_group
+}
+
+yb_install_python3_from_source() {
+  start_group "Installing Python 3 from source"
+  bash "$yb_build_infra_scripts_dir/centos_install_python3_from_source.sh"
+  end_group
+}
+
+yb_install_custom_built_llvm() {
+  start_group "Installing a custom-built LLVM"
+  bash "$yb_build_infra_scripts_dir/centos_install_custom_built_llvm.sh"
+  end_group
+}
+
+yb_perform_os_independent_steps() {
+  yb_create_yugabyteci_user
+  yb_install_hub_tool
+  yb_install_shellcheck
+  yb_install_maven
+  yb_create_opt_yb_build_hierarchy
+}
+
+yb_yum_cleanup() {
+  start_group "Yum cleanup"
+  yum clean all
+  end_group
 }
