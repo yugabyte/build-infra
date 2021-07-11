@@ -97,6 +97,7 @@ detect_centos_version() {
   centos_major_version=$(
     grep -E ^VERSION= /etc/os-release | sed 's/VERSION=//; s/"//g' | awk '{print $1}'
   )
+  centos_major_version=${centos_major_version%%.*}
   if [[ ! $centos_major_version =~ ^[78]$ ]]; then
     echo "Unsupported major version of CentOS: $centos_major_version (from /etc/os-release)" >&2
     exit 1
