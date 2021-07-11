@@ -15,10 +15,9 @@ yb_remove_build_infra_scripts() {
 yb_debian_init_locale() {
   # Based on https://serverfault.com/a/894545
 
-  # Install locales package
   apt-get install -y locales
 
-  # Uncomment en_US.UTF-8 for inclusion in generation
+  # Uncomment en_US.UTF-8 for inclusion in locale generation.
   sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen
 
   # Generate locale
