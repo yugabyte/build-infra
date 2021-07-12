@@ -30,6 +30,7 @@ jobs:
           - ubuntu1804
           - ubuntu2004
           - debian10.9
+          - almalinux8
 
     runs-on: ubuntu-latest
     if: >
