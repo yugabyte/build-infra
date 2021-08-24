@@ -15,7 +15,7 @@ curl --silent -LO "$url"
 actual_sha256sum=$( sha256sum "$tarball_name" | awk '{print $1}' )
 expected_sha256sum=da8093956f0b4ae30293c9db498da9bdeaeea4e7a2b1f2d1637ddda064d06dd0
 if [[ $actual_sha256sum != "$expected_sha256sum" ]]; then
-  echo "Invalid checksum: $actual_sha256sum, expectded: $expected_sha256sum" >&2
+  echo "Invalid checksum: $actual_sha256sum, expected: $expected_sha256sum" >&2
   exit 1
 fi
 tar xzf "$tarball_name"
