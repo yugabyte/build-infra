@@ -169,21 +169,21 @@ yb_install_maven() {
 }
 
 yb_install_python3_from_source() {
-  start_group "Installing Python 3 from source"
+  yb_start_group "Installing Python 3 from source"
   bash "$yb_build_infra_scripts_dir/centos_install_python3_from_source.sh"
-  end_group
+  yb_end_group
 }
 
 yb_install_custom_built_llvm() {
-  start_group "Installing a custom-built LLVM"
+  yb_start_group "Installing a custom-built LLVM"
   bash "$yb_build_infra_scripts_dir/centos_install_custom_built_llvm.sh"
-  end_group
+  yb_end_group
 }
 
 yb_install_spark() {
-  start_group "Installing Spark"
+  yb_start_group "Installing Spark"
   bash "$yb_build_infra_scripts_dir/install_spark.sh"
-  end_group
+  yb_end_group
 }
 
 yb_perform_os_independent_steps() {
