@@ -116,7 +116,7 @@ yb_create_opt_yb_build_hierarchy() {
   mkdir -p "$top_level_dir"
   chmod 777 "$top_level_dir"
 
-  for dir_name in brew download_cache thirdparty tmp llvm; do
+  for dir_name in brew download_cache thirdparty tmp llvm spark; do
     dir_path=$top_level_dir/$dir_name
     (
       set -x
@@ -180,12 +180,19 @@ yb_install_custom_built_llvm() {
   end_group
 }
 
+yb_install_spark() {
+  start_group "Installing Spark"
+  bash "$yb_build_infra_scripts_dir/install_spark.sh"
+  end_group
+}
+
 yb_perform_os_independent_steps() {
   yb_create_yugabyteci_user
   yb_install_hub_tool
   yb_install_shellcheck
   yb_install_maven
   yb_create_opt_yb_build_hierarchy
+  yb_install_spark
 }
 
 yb_yum_cleanup() {
