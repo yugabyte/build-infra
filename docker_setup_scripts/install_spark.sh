@@ -40,4 +40,4 @@ cd "$spark_parent_dir"
 if [[ -d current ]]; then
   unlink current
 fi
-ln -s "$spark_parent_dir" current
+ln -s "$spark_dir_name" current
