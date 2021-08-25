@@ -80,6 +80,9 @@ readonly CENTOS8_ONLY_PACKAGES=(
   python38-devel
   python38-pip
   python38-psutil
+
+  glibc-locale-source
+  glibc-langpack-en
 )
 
 # -------------------------------------------------------------------------------------------------
