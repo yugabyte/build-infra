@@ -79,6 +79,7 @@ readonly CENTOS8_ONLY_PACKAGES=(
   python38
   python38-devel
   python38-pip
+  python38-psutil
 )
 
 # -------------------------------------------------------------------------------------------------
