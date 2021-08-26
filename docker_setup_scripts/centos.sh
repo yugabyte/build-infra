@@ -212,4 +212,8 @@ if [[ $centos_major_version -eq 7 ]]; then
   yb_install_custom_built_llvm
 fi
 
+if [[ $centos_major_version -eq 8 ]]; then
+  yb_redhat_init_locale
+fi
+
 yb_remove_build_infra_scripts

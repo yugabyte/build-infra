@@ -28,6 +28,10 @@ yb_debian_init_locale() {
   export LANGUAGE=en_US.UTF-8
 }
 
+yb_redhat_init_locale() {
+  localedef -v -c -i en_US -f UTF-8 en_US.UTF-8
+}
+
 yb_debian_init() {
   export DEBIAN_FRONTEND=noninteractive
   yb_debian_init_locale
