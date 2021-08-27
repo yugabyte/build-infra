@@ -32,6 +32,7 @@ readonly CENTOS_COMMON_PACKAGES=(
   bzip2
   bzip2-devel
   ccache
+  chrpath
   curl
   gcc
   gcc-c++
@@ -49,6 +50,7 @@ readonly CENTOS_COMMON_PACKAGES=(
   openssl-devel
   openssl-devel
   patch
+  patchelf
   perl-Digest
   php
   php-common
