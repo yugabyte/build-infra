@@ -51,23 +51,21 @@ yb_redhat_init_locale() {
   # [verbose] LC_CTYPE: table for class "combining": 18446744073709551615 bytes
   # [verbose] LC_CTYPE: table for class "combining_level3": 18446744073709551615 bytes
   # [verbose] LC_CTYPE: table for map "toupper": 0 bytes
-  # [verbose] LC_CTYPE: table for map "tolower": 94010668021612 bytes
-  # [verbose] LC_CTYPE: table for map "totitle": 50331645 by  
+  # [verbose] LC_CTYPE: table for map "totitle": 50331645 bytes
+  # [verbose] LC_CTYPE: table for width: 0 bytes
   local localedef_exit_code=$?
-  set +e
-  if [[ $localedef_exit_code -eq 0 ]]; then
-    return
-  fi
+  set -e
+  echo "localedef returned exit code $localedef_exit_code (expecting 0 or 1)"
   if [[ -s $localedef_err_path ]]; then
     echo >&2 "Non-empty error output from localedef:"
     cat >&2 "/tmp/localedeferr"
     exit 1
   fi
-  if [[ $localedef_exit_code -ne 1 ]]; then
+  rm -f "$localedef_err_path"
+  if [[ $localedef_exit_code -ne 0 && $localedef_exit_code -ne 1 ]]; then
     echo >&2 "Unexpected exit code from localedef, expected 0 or 1, got: $localedef_exit_code"
     exit 1
   fi
-  rm -f "$localedef_err_path"
 }
 
 yb_debian_init() {
