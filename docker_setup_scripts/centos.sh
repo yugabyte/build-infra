@@ -32,6 +32,7 @@ readonly CENTOS_COMMON_PACKAGES=(
   bzip2
   bzip2-devel
   ccache
+  chrpath
   curl
   gcc
   gcc-c++
@@ -49,6 +50,7 @@ readonly CENTOS_COMMON_PACKAGES=(
   openssl-devel
   openssl-devel
   patch
+  patchelf
   perl-Digest
   php
   php-common
@@ -214,6 +216,10 @@ yb_install_cmake_from_source
 if [[ $centos_major_version -eq 7 ]]; then
   yb_install_python3_from_source
   yb_install_custom_built_llvm
+fi
+
+if [[ $centos_major_version -eq 8 ]]; then
+  yb_redhat_init_locale
 fi
 
 yb_remove_build_infra_scripts

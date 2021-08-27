@@ -28,6 +28,46 @@ yb_debian_init_locale() {
   export LANGUAGE=en_US.UTF-8
 }
 
+yb_redhat_init_locale() {
+  set +e
+  local localedef_err_path=/tmp/localedef.err
+  ( set -x; localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 --quiet 2>"$localedef_err_path" )
+  # localedef, if executed without --quiet, will usually show some warnings like
+  # [warning] LC_IDENTIFICATION: field `audience' not defined
+  # [warning] LC_IDENTIFICATION: field `application' not defined
+  # [warning] LC_IDENTIFICATION: field `abbreviation' not defined
+  # [verbose] LC_CTYPE: table for class "upper": 3264919828641826143 bytes
+  # [verbose] LC_CTYPE: table for class "lower": 4051037683542732370 bytes
+  # [verbose] LC_CTYPE: table for class "alpha": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "digit": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "xdigit": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "space": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "print": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "graph": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "blank": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "cntrl": 18446744069414584898 bytes
+  # [verbose] LC_CTYPE: table for class "punct": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "alnum": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "combining": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for class "combining_level3": 18446744073709551615 bytes
+  # [verbose] LC_CTYPE: table for map "toupper": 0 bytes
+  # [verbose] LC_CTYPE: table for map "totitle": 50331645 bytes
+  # [verbose] LC_CTYPE: table for width: 0 bytes
+  local localedef_exit_code=$?
+  set -e
+  echo "localedef returned exit code $localedef_exit_code (expecting 0 or 1)"
+  if [[ -s $localedef_err_path ]]; then
+    echo >&2 "Non-empty error output from localedef:"
+    cat >&2 "/tmp/localedeferr"
+    exit 1
+  fi
+  rm -f "$localedef_err_path"
+  if [[ $localedef_exit_code -ne 0 && $localedef_exit_code -ne 1 ]]; then
+    echo >&2 "Unexpected exit code from localedef, expected 0 or 1, got: $localedef_exit_code"
+    exit 1
+  fi
+}
+
 yb_debian_init() {
   export DEBIAN_FRONTEND=noninteractive
   yb_debian_init_locale
