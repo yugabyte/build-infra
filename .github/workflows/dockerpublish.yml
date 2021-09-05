@@ -31,6 +31,7 @@ jobs:
           - ubuntu2004
           - debian10.9
           - almalinux8
+          - opensuse-leap15
 
     runs-on: ubuntu-latest
     if: >
