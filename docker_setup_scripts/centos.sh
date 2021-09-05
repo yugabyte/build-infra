@@ -215,7 +215,6 @@ yb_install_cmake_from_source
 
 if [[ $centos_major_version -eq 7 ]]; then
   yb_install_python3_from_source
-  yb_install_custom_built_llvm
 fi
 
 if [[ $centos_major_version -eq 8 ]]; then

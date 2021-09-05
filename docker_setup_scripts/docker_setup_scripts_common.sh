@@ -167,12 +167,15 @@ yb_create_opt_yb_build_hierarchy() {
 }
 
 yb_create_yugabyteci_user() {
-  yb_start_group "Creating the yugabyteci user"
+  local user_name=yugabyteci
+  yb_start_group "Creating the $user_name user"
   if [[ $OSTYPE == linux* ]]; then
-    if [[ -f /etc/redhat-release ]]; then
-      adduser yugabyteci
+    if grep -q 'ID="opensuse"' /etc/os-release; then
+      useradd "$user_name" --create-home
+    elif [[ -f /etc/redhat-release ]]; then
+      adduser "$user_name"
     else
-      adduser --disabled-password --gecos "" yugabyteci
+      adduser --disabled-password --gecos "" "$user_name"
     fi
   fi
   yb_end_group
@@ -210,13 +213,7 @@ yb_install_maven() {
 
 yb_install_python3_from_source() {
   yb_start_group "Installing Python 3 from source"
-  bash "$yb_build_infra_scripts_dir/centos_install_python3_from_source.sh"
-  yb_end_group
-}
-
-yb_install_custom_built_llvm() {
-  yb_start_group "Installing a custom-built LLVM"
-  bash "$yb_build_infra_scripts_dir/centos_install_custom_built_llvm.sh"
+  bash "$yb_build_infra_scripts_dir/install_python3_from_source.sh"
   yb_end_group
 }
 
