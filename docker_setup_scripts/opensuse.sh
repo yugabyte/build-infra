@@ -41,6 +41,7 @@ packages=(
   byacc
   ncurses-devel
   java-1_8_0-openjdk
+  go
   # groff provides the soelim program needed by openldap build.
   groff
 )
