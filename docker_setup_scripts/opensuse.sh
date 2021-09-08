@@ -42,6 +42,8 @@ packages=(
   ncurses-devel
   java-1_8_0-openjdk
   go
+  # We need to install some software from tar.xz archives.
+  xz
   # groff provides the soelim program needed by openldap build.
   groff
 )
