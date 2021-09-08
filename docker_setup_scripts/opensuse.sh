@@ -49,7 +49,7 @@ packages=(
 # Main script
 # -------------------------------------------------------------------------------------------------
 
-zypper install -y "${packages[@]}"
+yb_zypper_install_packages_separately "${packages[@]}"
 yb_perform_os_independent_steps
 yb_remove_build_infra_scripts
 

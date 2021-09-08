@@ -106,8 +106,12 @@ yb_heading() {
   echo
 }
 
-yb_apt_install_packages_separately() {
-  yb_start_group "Installing Debian/Ubuntu packages"
+yb_install_packages_separately() {
+  local package_type=$1
+  local package_manager=$2
+  shift 2
+
+  yb_start_group "Installing $package_type packages"
   local failed_packages=()
   local num_succeeded=0
   local num_failed=0
@@ -128,6 +132,14 @@ yb_apt_install_packages_separately() {
     return 1
   fi
   return 0
+}
+
+yb_apt_install_packages_separately() {
+  yb_install_packages_separately "Debian/Ubuntu (apt)" "apt-get"
+}
+
+yb_zypper_install_packages_separately() {
+  yb_install_packages_separately "OpenSUSE Zypper (rpm)" "zypper"
 }
 
 yb_debian_install_llvm_packages() {
