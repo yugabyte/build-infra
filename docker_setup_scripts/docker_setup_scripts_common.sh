@@ -135,11 +135,11 @@ yb_install_packages_separately() {
 }
 
 yb_apt_install_packages_separately() {
-  yb_install_packages_separately "Debian/Ubuntu (apt)" "apt-get"
+  yb_install_packages_separately "Debian/Ubuntu (apt)" "apt-get" "$@"
 }
 
 yb_zypper_install_packages_separately() {
-  yb_install_packages_separately "OpenSUSE Zypper (rpm)" "zypper"
+  yb_install_packages_separately "OpenSUSE Zypper (rpm)" "zypper" "$@"
 }
 
 yb_debian_install_llvm_packages() {
@@ -182,7 +182,8 @@ yb_create_yugabyteci_user() {
   local user_name=yugabyteci
   yb_start_group "Creating the $user_name user"
   if [[ $OSTYPE == linux* ]]; then
-    if grep -q 'ID="opensuse"' /etc/os-release; then
+    # Note there is no closing double quote in the string that we search for to detect OpenSUSE.
+    if grep -q 'ID="opensuse' /etc/os-release; then
       useradd "$user_name" --create-home
     elif [[ -f /etc/redhat-release ]]; then
       adduser "$user_name"
