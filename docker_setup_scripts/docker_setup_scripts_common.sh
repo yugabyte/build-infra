@@ -117,7 +117,7 @@ yb_install_packages_separately() {
   local num_failed=0
   for package in "$@"; do
     yb_heading "Installing package $package and its dependencies"
-    if apt-get install -y "$package"; then
+    if "${package_manager}" install -y "$package"; then
       (( num_succeeded+=1 ))
     else
       failed_packages+=( "$package" )
