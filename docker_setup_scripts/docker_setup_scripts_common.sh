@@ -106,14 +106,18 @@ yb_heading() {
   echo
 }
 
-yb_apt_install_packages_separately() {
-  yb_start_group "Installing Debian/Ubuntu packages"
+yb_install_packages_separately() {
+  local package_type=$1
+  local package_manager=$2
+  shift 2
+
+  yb_start_group "Installing $package_type packages"
   local failed_packages=()
   local num_succeeded=0
   local num_failed=0
   for package in "$@"; do
     yb_heading "Installing package $package and its dependencies"
-    if apt-get install -y "$package"; then
+    if "${package_manager}" install -y "$package"; then
       (( num_succeeded+=1 ))
     else
       failed_packages+=( "$package" )
@@ -128,6 +132,14 @@ yb_apt_install_packages_separately() {
     return 1
   fi
   return 0
+}
+
+yb_apt_install_packages_separately() {
+  yb_install_packages_separately "Debian/Ubuntu (apt)" "apt-get" "$@"
+}
+
+yb_zypper_install_packages_separately() {
+  yb_install_packages_separately "OpenSUSE Zypper (rpm)" "zypper" "$@"
 }
 
 yb_debian_install_llvm_packages() {
@@ -167,12 +179,16 @@ yb_create_opt_yb_build_hierarchy() {
 }
 
 yb_create_yugabyteci_user() {
-  yb_start_group "Creating the yugabyteci user"
+  local user_name=yugabyteci
+  yb_start_group "Creating the $user_name user"
   if [[ $OSTYPE == linux* ]]; then
-    if [[ -f /etc/redhat-release ]]; then
-      adduser yugabyteci
+    # Note there is no closing double quote in the string that we search for to detect OpenSUSE.
+    if grep -q 'ID="opensuse' /etc/os-release; then
+      useradd "$user_name" --create-home
+    elif [[ -f /etc/redhat-release ]]; then
+      adduser "$user_name"
     else
-      adduser --disabled-password --gecos "" yugabyteci
+      adduser --disabled-password --gecos "" "$user_name"
     fi
   fi
   yb_end_group
@@ -210,13 +226,7 @@ yb_install_maven() {
 
 yb_install_python3_from_source() {
   yb_start_group "Installing Python 3 from source"
-  bash "$yb_build_infra_scripts_dir/centos_install_python3_from_source.sh"
-  yb_end_group
-}
-
-yb_install_custom_built_llvm() {
-  yb_start_group "Installing a custom-built LLVM"
-  bash "$yb_build_infra_scripts_dir/centos_install_custom_built_llvm.sh"
+  bash "$yb_build_infra_scripts_dir/install_python3_from_source.sh"
   yb_end_group
 }
 

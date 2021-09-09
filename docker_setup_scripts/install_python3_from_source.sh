@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC1091
-source scl_source enable devtoolset-8
+if grep -q 'ID="centos"' /etc/os-release && grep -q 'VERSION_ID="7"' /etc/os-release; then
+  # shellcheck disable=SC1091
+  source scl_source enable devtoolset-8
+fi
 
 set -euo pipefail
 
@@ -33,11 +35,11 @@ echo "CFLAG=$CFLAGS"
 echo "LDFLAGS=$LDFLAGS"
 ./configure "--prefix=$python_prefix" "--with-optimizations"
 make
-sudo make install
+make install
 # Upgrade pip
-sudo "$python_prefix/bin/pip3" install -U pip
+"$python_prefix/bin/pip3" install -U pip
 
 for binary_name in python3 pip3 python3-config; do
-  sudo update-alternatives --install "/usr/local/bin/$binary_name" "$binary_name" \
-                           "$python_prefix/bin/$binary_name" 1000
+  update-alternatives --install "/usr/local/bin/$binary_name" "$binary_name" \
+    "$python_prefix/bin/$binary_name" 1000
 done
