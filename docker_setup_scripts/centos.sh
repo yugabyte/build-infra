@@ -22,8 +22,8 @@ readonly TOOLSET_PACKAGE_SUFFIXES_CENTOS8=(
   gcc-c++
 )
 
-readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL=( 8 9 )
-readonly CENTOS8_GCC_TOOLSETS_TO_INSTALL=( 9 )
+readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL=( 8 9 10 11 )
+readonly CENTOS8_GCC_TOOLSETS_TO_INSTALL=( 9 10 11 )
 
 # Packages installed on all supported versions of CentOS.
 readonly CENTOS_COMMON_PACKAGES=(
