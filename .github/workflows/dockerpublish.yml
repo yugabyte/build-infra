@@ -26,7 +26,6 @@ jobs:
       matrix:
         image_name:
           - centos7
-          - centos8
           - ubuntu1804
           - ubuntu2004
           - debian10.9
