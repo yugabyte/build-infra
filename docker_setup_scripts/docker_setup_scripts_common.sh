@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-readonly yb_build_infra_scripts_dir=$( cd "${BASH_SOURCE[0]%/*}" && pwd )
+yb_build_infra_scripts_dir=$( cd "${BASH_SOURCE[0]%/*}" && pwd )
+readonly yb_build_infra_scripts_dir
 
 yb_remove_build_infra_scripts() {
   if [[ $yb_build_infra_scripts_dir =~ ^/tmp/ ]]; then
@@ -142,12 +143,6 @@ yb_zypper_install_packages_separately() {
   yb_install_packages_separately "OpenSUSE Zypper (rpm)" "zypper" "$@"
 }
 
-yb_debian_install_llvm_packages() {
-  yb_start_group "Installing LLVM/Clang packages"
-  bash "$yb_build_infra_scripts_dir/debian_install_llvm_packages.sh"
-  yb_end_group
-}
-
 yb_perform_common_setup() {
   bash "$yb_build_infra_scripts_dir/perform_common_setup.sh"
 }
@@ -158,7 +153,6 @@ yb_debian_configure_and_install_packages() {
   yb_apt_get_dist_upgrade
   yb_debian_init
   yb_apt_install_packages_separately "${packages[@]}"
-  yb_debian_install_llvm_packages
   yb_apt_cleanup
 }
 

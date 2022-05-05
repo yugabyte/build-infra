@@ -9,7 +9,9 @@ if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
   exit 1
 fi
 
-readonly yb_build_infra_root=$( cd "${BASH_SOURCE[0]%/*}" && cd .. && pwd )
+yb_build_infra_root=$( cd "${BASH_SOURCE[0]%/*}" && cd .. && pwd )
+readonly yb_build_infra_root
+
 if [[ ! -d $yb_build_infra_root/yugabyte-bash-common ||
       -z $( ls -A "$yb_build_infra_root/yugabyte-bash-common" ) ]]; then
   ( cd "$yb_build_infra_root"; git submodule update --init --recursive )
