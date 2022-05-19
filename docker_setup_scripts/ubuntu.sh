@@ -33,6 +33,7 @@ packages=(
   maven
   ninja-build
   openjdk-8-jdk-headless
+  patchelf
   pkg-config
   python3-dev
   python3-pip

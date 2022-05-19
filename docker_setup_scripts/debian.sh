@@ -26,6 +26,7 @@ packages=(
   libtsan0
   locales
   maven
+  patchelf
   pkg-config
   python3-dev
   python3-pip
