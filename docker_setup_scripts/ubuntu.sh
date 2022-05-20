@@ -49,11 +49,18 @@ packages=(
   xz-utils
 )
 
+if [[ $ubuntu_major_version -ge 20 ]]; then
+  packages+=( g++-9 g++-10 )
+fi
+
+if [[ $ubuntu_major_version -ge 22 ]]; then
+  packages+=( g++-11 )
+fi
+
 if [[ $ubuntu_major_version -le 18 ]]; then
   packages+=(
     python-pip
     python-dev
-    gcc-8
     g++-8
   )
 fi
