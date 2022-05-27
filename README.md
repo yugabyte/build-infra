@@ -5,7 +5,9 @@
 
 This repository contains code to build Docker images that can be used to build
 YugabyteDB. On every commit to this repository we automatically build and push
-the following Docker images:
+the following Docker images for x86_64.
+
+## x86_64 images
 
 - AlmaLinux 8: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux8/tags
 - CentOS 7: https://hub.docker.com/r/yugabyteci/yb_build_infra_centos7/tags
@@ -14,3 +16,12 @@ the following Docker images:
 - Ubuntu 22.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2204/tags
 - Debian 10.9: https://hub.docker.com/r/yugabyteci/yb_build_infra_debian10.9/tags
 - OpenSUSE Leap 15: https://hub.docker.com/r/yugabyteci/yb_build_infra_opensuse-leap15/tags
+
+## aarch64 images
+
+Also, the following aarch64 images have been built manually.
+
+- AlmaLinux 8: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux8_aarch64/tags
+- Ubuntu 20.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2004_aarch64/tags
+- Ubuntu 22.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2204_aarch64/tags
+
