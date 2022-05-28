@@ -210,8 +210,8 @@ yb_yum_cleanup
 
 yb_perform_os_independent_steps
 
-yb_install_ninja_from_source
-yb_install_cmake_from_source
+yb_install_cmake
+yb_install_ninja
 
 if [[ $centos_major_version -eq 7 ]]; then
   yb_install_python3_from_source
