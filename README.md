@@ -14,8 +14,6 @@ the following Docker images for x86_64.
 - Ubuntu 18.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu1804/tags
 - Ubuntu 20.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2004/tags
 - Ubuntu 22.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2204/tags
-- Debian 10.9: https://hub.docker.com/r/yugabyteci/yb_build_infra_debian10.9/tags
-- OpenSUSE Leap 15: https://hub.docker.com/r/yugabyteci/yb_build_infra_opensuse-leap15/tags
 
 ## aarch64 images
 
@@ -24,4 +22,3 @@ Also, the following aarch64 images have been built manually.
 - AlmaLinux 8: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux8_aarch64/tags
 - Ubuntu 20.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2004_aarch64/tags
 - Ubuntu 22.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2204_aarch64/tags
-
