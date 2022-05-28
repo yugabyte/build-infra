@@ -22,8 +22,9 @@ Options:
   -i, --image_name
     Image name to build.
     Available options: ${docker_image_names[*]}
-  --tag_user <username>
-    Use this username for the Docker image tag
+  --tag_prefix <prefix>
+    If this is specified, prefix the tag with "<prefix>/". This is typically the username or the
+    organization on Docker Hub.
   --tag_output_file <tag_output_file>
     The file to write the resulting Docker image tag to
   -p, --push
@@ -76,7 +77,8 @@ if [[ -n $tag_prefix ]]; then
   tag_prefix=$tag_prefix/
 fi
 
-tag=${tag_prefix}yb_build_infra_$image_name:v${timestamp}
+arch=$( uname -m )
+tag=${tag_prefix}yb_build_infra_${image_name}_${arch}:v${timestamp}
 if [[ -n $tag_output_file ]]; then
   echo "$tag" >"$tag_output_file"
 fi
