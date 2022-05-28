@@ -194,13 +194,13 @@ yb_install_hub_tool() {
   yb_end_group
 }
 
-yb_install_ninja_from_source() {
+yb_install_ninja() {
   yb_start_group "Instaling the Ninja build system"
   bash "$yb_build_infra_scripts_dir/install_ninja.sh"
   yb_end_group
 }
 
-yb_install_cmake_from_source() {
+yb_install_cmake() {
   yb_start_group "Installing CMake"
   bash "$yb_build_infra_scripts_dir/install_cmake.sh"
   yb_end_group
