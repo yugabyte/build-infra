@@ -5,7 +5,7 @@ set -euo pipefail -x
 spark_version=3.2.1
 spark_dir_name="spark-${spark_version}-bin-hadoop3.2"
 spark_tarball_name="$spark_dir_name.tgz"
-spark_download_url="https://dlcdn.apache.org/spark/spark-${spark_version}/${spark_tarball_name}"
+spark_download_url="https://archive.apache.org/dist/spark/spark-${spark_version}/${spark_tarball_name}"
 
 spark_parent_dir=/opt/yb-build/spark
 mkdir -p "${spark_parent_dir}"
