@@ -22,7 +22,8 @@ readonly TOOLSET_PACKAGE_SUFFIXES_CENTOS8=(
   gcc-c++
 )
 
-readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL=( 8 9 10 11 )
+readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64=( 8 9 10 11 )
+readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64=( 8 9 10 )
 readonly CENTOS8_GCC_TOOLSETS_TO_INSTALL=( 9 10 11 )
 
 # Packages installed on all supported versions of CentOS.
@@ -129,7 +130,11 @@ install_packages() {
   local toolset_package_suffixes=( "${TOOLSET_PACKAGE_SUFFIXES_COMMON[@]}" )
   if [[ $centos_major_version -eq 7 ]]; then
     toolset_prefix="devtoolset"
-    gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL[@]}" )
+    if [[ $( uname -m ) == "x86_64" ]]; then
+      gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64[@]}" )
+    else
+      gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64[@]}" )
+    fi
     package_manager=yum
     packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
   elif [[ $centos_major_version -eq 8 ]]; then
@@ -188,11 +193,38 @@ install_packages() {
 
 install_golang() {
   start_group "Installing Golang"
-  if [[ $centos_major_version -eq 7 ]]; then
-    rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
-    curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
+  if [[ $( uname -m ) == "aarch64" && $centos_major_version == 7 ]]; then
+    local go_version=1.19.2
+    local go_archive_name=go${go_version}.linux-arm64.tar.gz
+    local go_url=https://go.dev/dl/${go_archive_name}
+    local expected_sha256=b62a8d9654436c67c14a0c91e931d50440541f09eb991a987536cb982903126d
+    local tmp_dir=/tmp/go_installation
+    mkdir -p "${tmp_dir}"
+    (
+      cd "${tmp_dir}"
+      wget "${go_url}"
+      actual_sha256=$( sha256sum "${go_archive_name}" | awk '{print $1}' )
+      if [[ ${actual_sha256} != "${expected_sha256}" ]]; then
+        echo >&2 "Invalid SHA256 sum of ${go_archive_name}: expected ${expected_sha256}, got" \
+                 "${actual_sha256}"
+        exit 1
+      fi
+      tar xzf "${go_archive_name}"
+      mkdir -p /opt/go
+      local go_install_path="/opt/go/go-${go_version}"
+      mv go "${go_install_path}"
+      mkdir -p /usr/local/bin
+      ln -s "${go_install_path}" /opt/go/latest
+      ln -s /opt/go/latest/bin/go /usr/local/bin/go
+      ln -s /opt/go/latest/bin/gofmt /usr/local/bin/gofmt
+    )
+  else
+    if [[ $centos_major_version -eq 7 ]]; then
+      rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
+      curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
+    fi
+    yum install -y golang
   fi
-  yum install -y golang
   end_group
 }
 
