@@ -16,7 +16,7 @@ readonly TOOLSET_PACKAGE_SUFFIXES_COMMON=(
   libubsan-devel
 )
 
-readonly TOOLSET_PACKAGE_SUFFIXES_CENTOS8=(
+readonly TOOLSET_PACKAGE_SUFFIXES_RHEL8=(
   toolchain
   gcc
   gcc-c++
@@ -24,7 +24,7 @@ readonly TOOLSET_PACKAGE_SUFFIXES_CENTOS8=(
 
 readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64=( 8 9 10 11 )
 readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64=( 8 9 10 )
-readonly CENTOS8_GCC_TOOLSETS_TO_INSTALL=( 9 10 11 )
+readonly RHEL8_GCC_TOOLSETS_TO_INSTALL=( 9 10 11 )
 
 # Packages installed on all supported versions of CentOS.
 readonly CENTOS_COMMON_PACKAGES=(
@@ -75,7 +75,7 @@ readonly CENTOS7_ONLY_PACKAGES=(
   libsemanage-python
 )
 
-readonly CENTOS8_ONLY_PACKAGES=(
+readonly RHEL8_ONLY_PACKAGES=(
   libselinux
   libselinux-devel
   llvm-toolset
@@ -130,19 +130,27 @@ install_packages() {
   local toolset_package_suffixes=( "${TOOLSET_PACKAGE_SUFFIXES_COMMON[@]}" )
   if [[ $centos_major_version -eq 7 ]]; then
     toolset_prefix="devtoolset"
-    if [[ $( uname -m ) == "x86_64" ]]; then
-      gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64[@]}" )
-    else
-      gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64[@]}" )
-    fi
+    local gcc_toolsets_to_install
+    case "$( uname -m )" in
+      x86_64)
+        gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64[@]}" )
+      ;;
+      aarch64)
+        gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64[@]}" )
+      ;;
+      *)
+        echo >&2 "Unknown architecture: $( uname -m )"
+        exit 1
+      ;;
+    esac
     package_manager=yum
     packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
   elif [[ $centos_major_version -eq 8 ]]; then
     toolset_prefix="gcc-toolset"
-    gcc_toolsets_to_install=( "${CENTOS8_GCC_TOOLSETS_TO_INSTALL[@]}" )
-    toolset_package_suffixes+=( "${TOOLSET_PACKAGE_SUFFIXES_CENTOS8[@]}" )
+    gcc_toolsets_to_install=( "${RHEL8_GCC_TOOLSETS_TO_INSTALL[@]}" )
+    toolset_package_suffixes+=( "${TOOLSET_PACKAGE_SUFFIXES_RHEL8[@]}" )
     package_manager=dnf
-    packages+=( "${CENTOS8_ONLY_PACKAGES[@]}" )
+    packages+=( "${RHEL8_ONLY_PACKAGES[@]}" )
   else
     echo "Unknown CentOS major version: $centos_major_version" >&2
     exit 1
@@ -193,38 +201,51 @@ install_packages() {
 
 install_golang() {
   start_group "Installing Golang"
-  if [[ $( uname -m ) == "aarch64" && $centos_major_version == 7 ]]; then
-    local go_version=1.19.2
-    local go_archive_name=go${go_version}.linux-arm64.tar.gz
-    local go_url=https://go.dev/dl/${go_archive_name}
-    local expected_sha256=b62a8d9654436c67c14a0c91e931d50440541f09eb991a987536cb982903126d
-    local tmp_dir=/tmp/go_installation
-    mkdir -p "${tmp_dir}"
-    (
-      cd "${tmp_dir}"
-      wget "${go_url}"
-      actual_sha256=$( sha256sum "${go_archive_name}" | awk '{print $1}' )
-      if [[ ${actual_sha256} != "${expected_sha256}" ]]; then
-        echo >&2 "Invalid SHA256 sum of ${go_archive_name}: expected ${expected_sha256}, got" \
-                 "${actual_sha256}"
-        exit 1
-      fi
-      tar xzf "${go_archive_name}"
-      mkdir -p /opt/go
-      local go_install_path="/opt/go/go-${go_version}"
-      mv go "${go_install_path}"
-      mkdir -p /usr/local/bin
-      ln -s "${go_install_path}" /opt/go/latest
-      ln -s /opt/go/latest/bin/go /usr/local/bin/go
-      ln -s /opt/go/latest/bin/gofmt /usr/local/bin/gofmt
-    )
-  else
-    if [[ $centos_major_version -eq 7 ]]; then
-      rpm --import https://mirror.go-repo.io/centos/RPM-GPG-KEY-GO-REPO
-      curl -s https://mirror.go-repo.io/centos/go-repo.repo | tee /etc/yum.repos.d/go-repo.repo
+
+  local go_version=1.19.2
+  local expected_sha256
+  local arch_in_pkg_name
+  case "$( uname -m )" in
+    aarch64)
+      expected_sha256=b62a8d9654436c67c14a0c91e931d50440541f09eb991a987536cb982903126d
+      arch_in_pkg_name=arm64
+    ;;
+    x86_64)
+      expected_sha256=16f8047d7b627699b3773680098fbaf7cc962b7db02b3e02726f78c4db26dfde
+      arch_in_pkg_name=amd64
+    ;;
+    *)
+      echo >&2 "Unknown architecture $( uname -m )"
+      exit 1
+    ;;
+  esac
+
+  local go_archive_name="go${go_version}.linux-${arch_in_pkg_name}.tar.gz"
+  local go_url="https://go.dev/dl/${go_archive_name}"
+  local tmp_dir="/tmp/go_installation"
+  local go_install_parent_dir="/opt/go"
+  local go_install_path="${go_install_parent_dir}/go-${go_version}"
+  local go_latest_dir_link="${go_install_parent_dir}/latest"
+  mkdir -p "${tmp_dir}"
+  (
+    cd "${tmp_dir}"
+    wget "${go_url}"
+    actual_sha256=$( sha256sum "${go_archive_name}" | awk '{print $1}' )
+    if [[ ${actual_sha256} != "${expected_sha256}" ]]; then
+      echo >&2 "Invalid SHA256 sum of ${go_archive_name}: expected ${expected_sha256}, got" \
+               "${actual_sha256}"
+      exit 1
     fi
-    yum install -y golang
-  fi
+    tar xzf "${go_archive_name}"
+    mkdir -p "${go_install_parent_dir}"
+    mv go "${go_install_path}"
+    mkdir -p /usr/local/bin
+    ln -s "${go_install_path}" "${go_latest_dir_link}"
+    for binary_name in go gofmt; do
+      ln -s "${go_latest_dir_link}/bin/${binary_name}" "/usr/local/bin/${binary_name}"
+    done
+  )
+  rm -rf "${tmp_dir}"
   end_group
 }
 
