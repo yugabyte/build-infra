@@ -50,8 +50,15 @@ yb_redhat_init_locale() {
     local localedef_err_path=/tmp/localedef.err
     set +e
     (
-      set -x;
-      localedef -v -c -i "${locale_name}" -f UTF-8 "${locale_name}.UTF-8" --quiet \
+      set -x
+      # See the link below regarding avoiding some of the errors.
+      # We treat any errors in stderr as fatal.
+      # https://stackoverflow.com/questions/30736238/centos-7-docker-image-and-locale-compilation
+      localedef --force \
+                --quiet \
+                "--inputfile=${locale_name}" \
+                "--charmap=UTF-8" \
+                "${locale_name}.UTF-8"
         2>"${localedef_err_path}"
     )
     local localedef_exit_code=$?
