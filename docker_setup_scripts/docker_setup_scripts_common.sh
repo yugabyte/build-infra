@@ -64,7 +64,7 @@ yb_redhat_init_locale() {
     fi
     if [[ -s ${localedef_err_path} ]]; then
       echo >&2 "Non-empty error output from localedef:"
-      cat >&2 "/tmp/localedeferr"
+      cat >&2 "${localedef_err_path}"
       failure=true
     fi
     rm -f "${localedef_err_path}"
@@ -299,4 +299,26 @@ yb_perform_os_independent_steps() {
   yb_install_maven
   yb_create_opt_yb_build_hierarchy
   yb_install_spark
+}
+
+run_cmd_hide_output_if_ok() {
+  local out_prefix
+  out_prefix=/tmp/cmd_output_$( date +%Y-%m-%dT%H_%M_%S )_${RANDOM}_${RANDOM}_${RANDOM}
+  local stdout_path=${out_prefix}.out
+  local stderr_path=${out_prefix}.err
+  set +e
+  ( set -x; "$@" >"${stdout_path}" 2>"${stderr_path}" )
+  local exit_code=$?
+  set -e
+  if [[ ${exit_code} != 0 ]]; then
+    (
+      echo "Command failed with with exit code ${exit_code}: $*"
+      echo "Standard output from command: $*"
+      cat "${stdout_path}"
+      echo "Standard error from command: $*"
+      cat "${stderr_path}"
+    ) >&2
+    exit "${exit_code}"
+  fi
+  rm -f "${stdout_path}" "${stderr_path}"
 }

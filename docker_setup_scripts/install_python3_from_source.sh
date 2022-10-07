@@ -17,7 +17,7 @@ python_src_dir_name="Python-$python_version"
 cd "$python_tmp_dir"
 python_src_tarball_name="$python_src_dir_name.tgz"
 python_src_tarball_url="https://www.python.org/ftp/python/$python_version/$python_src_tarball_name"
-wget "$python_src_tarball_url"
+curl --location --remote-name --silent "${python_src_tarball_url}"
 actual_md5sum=$( md5sum "$python_src_tarball_name" | awk '{print $1}')
 expected_md5sum="a82168eb586e19122b747b84038825f2"
 if [[ $actual_md5sum != "$expected_md5sum" ]]; then
@@ -38,8 +38,8 @@ export LDFLAGS="-Wl,-rpath=$python_prefix/lib"
 echo "CFLAG=$CFLAGS"
 echo "LDFLAGS=$LDFLAGS"
 ./configure "--prefix=$python_prefix" "--with-optimizations"
-make
-make install
+run_cmd_hide_output_if_ok make
+run_cmd_hide_output_if_ok make install
 # Upgrade pip
 "$python_prefix/bin/pip3" install -U pip
 
