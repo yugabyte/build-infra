@@ -92,14 +92,6 @@ readonly RHEL8_ONLY_PACKAGES=(
 # Functions
 # -------------------------------------------------------------------------------------------------
 
-start_group() {
-  yb_start_group "$*"
-}
-
-end_group() {
-  yb_end_group
-}
-
 detect_os_version() {
   os_major_version=$(
     grep -E ^VERSION= /etc/os-release | sed 's/VERSION=//; s/"//g' | awk '{print $1}'
@@ -165,24 +157,24 @@ install_packages() {
     done
   done
 
-  start_group "Upgrading existing packages"
+  yb_start_group "Upgrading existing packages"
   "$package_manager" upgrade -y
-  end_group
+  yb_end_group
 
-  start_group "Installing epel-release"
+  yb_start_group "Installing epel-release"
   "$package_manager" install -y epel-release
-  end_group
+  yb_end_group
 
-  start_group "Installing development tools"
+  yb_start_group "Installing development tools"
   "$package_manager" groupinstall -y 'Development Tools'
-  end_group
+  yb_end_group
 
   if [[ $os_major_version -eq 7 ]]; then
     # We have to install centos-release-scl before installing devtoolsets.
     "$package_manager" install -y centos-release-scl
   fi
 
-  start_group "Installing CentOS $os_major_version packages"
+  yb_start_group "Installing CentOS $os_major_version packages"
   (
     set -x
     "${package_manager}" install -y "${packages[@]}"
@@ -196,7 +188,7 @@ install_packages() {
       exit 1
     fi
   done
-  end_group
+  yb_end_group
 }
 
 # -------------------------------------------------------------------------------------------------
@@ -206,8 +198,6 @@ install_packages() {
 detect_os_version
 
 install_packages
-
-install_golang
 
 yb_yum_cleanup
 

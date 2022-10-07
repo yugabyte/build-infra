@@ -236,13 +236,13 @@ yb_install_spark() {
 }
 
 yb_yum_cleanup() {
-  start_group "Yum cleanup"
-  yum clean all
-  end_group
+  yb_start_group "Yum cleanup"
+  ( set -x; yum clean all )
+  yb_end_group
 }
 
 yb_install_golang() {
-  start_group "Installing Golang"
+  yb_start_group "Installing Golang"
 
   local go_version=1.19.2
   local expected_sha256
@@ -288,7 +288,7 @@ yb_install_golang() {
     done
   )
   rm -rf "${tmp_dir}"
-  end_group
+  yb_end_group
 }
 
 yb_perform_os_independent_steps() {
