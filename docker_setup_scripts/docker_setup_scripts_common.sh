@@ -31,8 +31,31 @@ yb_debian_init_locale() {
 
 yb_redhat_init_locale() {
   set +e
-  local localedef_err_path=/tmp/localedef.err
-  ( set -x; localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 --quiet 2>"$localedef_err_path" )
+  local locale_names=(
+    "de_DE" "es_ES" "fr_FR" "it_IT" "ja_JP" "ko_KR" "pl_PL" "ru_RU" "sv_SE" "tr_TR" "zh_CN"
+  )
+  local locale_name
+  for locale_name in "${locale_names[@}}"; do
+    local localedef_err_path=/tmp/localedef.err
+    (
+      set -x;
+      localedef -v -c -i "${locale_name}" -f UTF-8 "${locale_name}".UTF-8" --quiet \
+        2>"${localedef_err_path}"
+    )
+    local localedef_exit_code=$?
+    set -e
+    echo "localedef returned exit code $localedef_exit_code (expecting 0 or 1)"
+    if [[ -s $localedef_err_path ]]; then
+      echo >&2 "Non-empty error output from localedef:"
+      cat >&2 "/tmp/localedeferr"
+      exit 1
+    fi
+    rm -f "${localedef_err_path}"
+    if [[ ${localedef_exit_code} -ne 0 && ${localedef_exit_code} -ne 1 ]]; then
+      echo >&2 "Unexpected exit code from localedef, expected 0 or 1, got: ${localedef_exit_code}"
+      exit 1
+    fi
+  done
   # localedef, if executed without --quiet, will usually show some warnings like
   # [warning] LC_IDENTIFICATION: field `audience' not defined
   # [warning] LC_IDENTIFICATION: field `application' not defined
@@ -54,19 +77,6 @@ yb_redhat_init_locale() {
   # [verbose] LC_CTYPE: table for map "toupper": 0 bytes
   # [verbose] LC_CTYPE: table for map "totitle": 50331645 bytes
   # [verbose] LC_CTYPE: table for width: 0 bytes
-  local localedef_exit_code=$?
-  set -e
-  echo "localedef returned exit code $localedef_exit_code (expecting 0 or 1)"
-  if [[ -s $localedef_err_path ]]; then
-    echo >&2 "Non-empty error output from localedef:"
-    cat >&2 "/tmp/localedeferr"
-    exit 1
-  fi
-  rm -f "$localedef_err_path"
-  if [[ $localedef_exit_code -ne 0 && $localedef_exit_code -ne 1 ]]; then
-    echo >&2 "Unexpected exit code from localedef, expected 0 or 1, got: $localedef_exit_code"
-    exit 1
-  fi
 }
 
 yb_debian_init() {
@@ -230,17 +240,68 @@ yb_install_spark() {
   yb_end_group
 }
 
+yb_yum_cleanup() {
+  start_group "Yum cleanup"
+  yum clean all
+  end_group
+}
+
+yb_install_golang() {
+  start_group "Installing Golang"
+
+  local go_version=1.19.2
+  local expected_sha256
+  local arch_in_pkg_name
+  case "$( uname -m )" in
+    aarch64)
+      expected_sha256=b62a8d9654436c67c14a0c91e931d50440541f09eb991a987536cb982903126d
+      arch_in_pkg_name=arm64
+    ;;
+    x86_64)
+      expected_sha256=5e8c5a74fe6470dd7e055a461acda8bb4050ead8c2df70f227e3ff7d8eb7eeb6
+      arch_in_pkg_name=amd64
+    ;;
+    *)
+      echo >&2 "Unknown architecture $( uname -m )"
+      exit 1
+    ;;
+  esac
+
+  local go_archive_name="go${go_version}.linux-${arch_in_pkg_name}.tar.gz"
+  local go_url="https://go.dev/dl/${go_archive_name}"
+  local tmp_dir="/tmp/go_installation"
+  local go_install_parent_dir="/opt/go"
+  local go_install_path="${go_install_parent_dir}/go-${go_version}"
+  local go_latest_dir_link="${go_install_parent_dir}/latest"
+  mkdir -p "${tmp_dir}"
+  (
+    cd "${tmp_dir}"
+    curl --location --silent --remote-name "${go_url}"
+    actual_sha256=$( sha256sum "${go_archive_name}" | awk '{print $1}' )
+    if [[ ${actual_sha256} != "${expected_sha256}" ]]; then
+      echo >&2 "Invalid SHA256 sum of ${go_archive_name}: expected ${expected_sha256}, got" \
+               "${actual_sha256}"
+      exit 1
+    fi
+    tar xzf "${go_archive_name}"
+    mkdir -p "${go_install_parent_dir}"
+    mv go "${go_install_path}"
+    mkdir -p /usr/local/bin
+    ln -s "${go_install_path}" "${go_latest_dir_link}"
+    for binary_name in go gofmt; do
+      ln -s "${go_latest_dir_link}/bin/${binary_name}" "/usr/local/bin/${binary_name}"
+    done
+  )
+  rm -rf "${tmp_dir}"
+  end_group
+}
+
 yb_perform_os_independent_steps() {
   yb_create_yugabyteci_user
+  yb_install_golang
   yb_install_hub_tool
   yb_install_shellcheck
   yb_install_maven
   yb_create_opt_yb_build_hierarchy
   yb_install_spark
-}
-
-yb_yum_cleanup() {
-  start_group "Yum cleanup"
-  yum clean all
-  end_group
 }

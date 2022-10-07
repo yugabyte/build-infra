@@ -100,14 +100,14 @@ end_group() {
   yb_end_group
 }
 
-detect_centos_version() {
-  centos_major_version=$(
+detect_os_version() {
+  os_major_version=$(
     grep -E ^VERSION= /etc/os-release | sed 's/VERSION=//; s/"//g' | awk '{print $1}'
   )
-  centos_major_version=${centos_major_version%%.*}
-  if [[ ! $centos_major_version =~ ^[78]$ ]]; then
+  os_major_version=${os_major_version%%.*}
+  if [[ ! $os_major_version =~ ^[78]$ ]]; then
     (
-      echo "Unsupported major version of CentOS: $centos_major_version (from /etc/os-release)"
+      echo "Unsupported major version of CentOS/RHEL: $os_major_version (from /etc/os-release)"
       echo
       echo "--------------------------------------------------------------------------------------"
       echo "Contents of /etc/os-release"
@@ -118,7 +118,7 @@ detect_centos_version() {
     )
     exit 1
   fi
-  readonly centos_major_version
+  readonly os_major_version
 }
 
 install_packages() {
@@ -128,7 +128,7 @@ install_packages() {
   local gcc_toolsets_to_install
   local package_manager
   local toolset_package_suffixes=( "${TOOLSET_PACKAGE_SUFFIXES_COMMON[@]}" )
-  if [[ $centos_major_version -eq 7 ]]; then
+  if [[ $os_major_version -eq 7 ]]; then
     toolset_prefix="devtoolset"
     local gcc_toolsets_to_install
     case "$( uname -m )" in
@@ -145,14 +145,14 @@ install_packages() {
     esac
     package_manager=yum
     packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
-  elif [[ $centos_major_version -eq 8 ]]; then
+  elif [[ $os_major_version -eq 8 ]]; then
     toolset_prefix="gcc-toolset"
     gcc_toolsets_to_install=( "${RHEL8_GCC_TOOLSETS_TO_INSTALL[@]}" )
     toolset_package_suffixes+=( "${TOOLSET_PACKAGE_SUFFIXES_RHEL8[@]}" )
     package_manager=dnf
     packages+=( "${RHEL8_ONLY_PACKAGES[@]}" )
   else
-    echo "Unknown CentOS major version: $centos_major_version" >&2
+    echo "Unknown CentOS major version: $os_major_version" >&2
     exit 1
   fi
 
@@ -177,12 +177,12 @@ install_packages() {
   "$package_manager" groupinstall -y 'Development Tools'
   end_group
 
-  if [[ $centos_major_version -eq 7 ]]; then
+  if [[ $os_major_version -eq 7 ]]; then
     # We have to install centos-release-scl before installing devtoolsets.
     "$package_manager" install -y centos-release-scl
   fi
 
-  start_group "Installing CentOS $centos_major_version packages"
+  start_group "Installing CentOS $os_major_version packages"
   (
     set -x
     "${package_manager}" install -y "${packages[@]}"
@@ -199,61 +199,11 @@ install_packages() {
   end_group
 }
 
-install_golang() {
-  start_group "Installing Golang"
-
-  local go_version=1.19.2
-  local expected_sha256
-  local arch_in_pkg_name
-  case "$( uname -m )" in
-    aarch64)
-      expected_sha256=b62a8d9654436c67c14a0c91e931d50440541f09eb991a987536cb982903126d
-      arch_in_pkg_name=arm64
-    ;;
-    x86_64)
-      expected_sha256=16f8047d7b627699b3773680098fbaf7cc962b7db02b3e02726f78c4db26dfde
-      arch_in_pkg_name=amd64
-    ;;
-    *)
-      echo >&2 "Unknown architecture $( uname -m )"
-      exit 1
-    ;;
-  esac
-
-  local go_archive_name="go${go_version}.linux-${arch_in_pkg_name}.tar.gz"
-  local go_url="https://go.dev/dl/${go_archive_name}"
-  local tmp_dir="/tmp/go_installation"
-  local go_install_parent_dir="/opt/go"
-  local go_install_path="${go_install_parent_dir}/go-${go_version}"
-  local go_latest_dir_link="${go_install_parent_dir}/latest"
-  mkdir -p "${tmp_dir}"
-  (
-    cd "${tmp_dir}"
-    wget "${go_url}"
-    actual_sha256=$( sha256sum "${go_archive_name}" | awk '{print $1}' )
-    if [[ ${actual_sha256} != "${expected_sha256}" ]]; then
-      echo >&2 "Invalid SHA256 sum of ${go_archive_name}: expected ${expected_sha256}, got" \
-               "${actual_sha256}"
-      exit 1
-    fi
-    tar xzf "${go_archive_name}"
-    mkdir -p "${go_install_parent_dir}"
-    mv go "${go_install_path}"
-    mkdir -p /usr/local/bin
-    ln -s "${go_install_path}" "${go_latest_dir_link}"
-    for binary_name in go gofmt; do
-      ln -s "${go_latest_dir_link}/bin/${binary_name}" "/usr/local/bin/${binary_name}"
-    done
-  )
-  rm -rf "${tmp_dir}"
-  end_group
-}
-
 # -------------------------------------------------------------------------------------------------
 # Main script
 # -------------------------------------------------------------------------------------------------
 
-detect_centos_version
+detect_os_version
 
 install_packages
 
@@ -266,12 +216,10 @@ yb_perform_os_independent_steps
 yb_install_cmake
 yb_install_ninja
 
-if [[ $centos_major_version -eq 7 ]]; then
+if [[ $os_major_version -eq 7 ]]; then
   yb_install_python3_from_source
 fi
 
-if [[ $centos_major_version -eq 8 ]]; then
-  yb_redhat_init_locale
-fi
+yb_redhat_init_locale
 
 yb_remove_build_infra_scripts

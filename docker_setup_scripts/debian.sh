@@ -13,7 +13,6 @@ packages=(
   curl
   flex
   git
-  golang
   groff-base
   less
   libasan5
