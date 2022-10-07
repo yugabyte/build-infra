@@ -6,6 +6,7 @@
 cd "$yb_build_infra_root"
 while IFS= read -r script_path; do
   echo "Checking $script_path"
+  bash -n "$script_path"
   shellcheck -x "$script_path"
 done < <(find . -name "*.sh" -and -not -wholename "./yugabyte-bash-common/*" )
 
