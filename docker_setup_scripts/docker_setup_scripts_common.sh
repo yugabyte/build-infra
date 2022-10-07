@@ -31,42 +31,54 @@ yb_debian_init_locale() {
 
 yb_redhat_init_locale() {
   set +e
-  local localedef_err_path=/tmp/localedef.err
-  ( set -x; localedef -v -c -i en_US -f UTF-8 en_US.UTF-8 --quiet 2>"$localedef_err_path" )
-  # localedef, if executed without --quiet, will usually show some warnings like
-  # [warning] LC_IDENTIFICATION: field `audience' not defined
-  # [warning] LC_IDENTIFICATION: field `application' not defined
-  # [warning] LC_IDENTIFICATION: field `abbreviation' not defined
-  # [verbose] LC_CTYPE: table for class "upper": 3264919828641826143 bytes
-  # [verbose] LC_CTYPE: table for class "lower": 4051037683542732370 bytes
-  # [verbose] LC_CTYPE: table for class "alpha": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "digit": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "xdigit": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "space": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "print": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "graph": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "blank": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "cntrl": 18446744069414584898 bytes
-  # [verbose] LC_CTYPE: table for class "punct": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "alnum": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "combining": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for class "combining_level3": 18446744073709551615 bytes
-  # [verbose] LC_CTYPE: table for map "toupper": 0 bytes
-  # [verbose] LC_CTYPE: table for map "totitle": 50331645 bytes
-  # [verbose] LC_CTYPE: table for width: 0 bytes
-  local localedef_exit_code=$?
-  set -e
-  echo "localedef returned exit code $localedef_exit_code (expecting 0 or 1)"
-  if [[ -s $localedef_err_path ]]; then
-    echo >&2 "Non-empty error output from localedef:"
-    cat >&2 "/tmp/localedeferr"
-    exit 1
-  fi
-  rm -f "$localedef_err_path"
-  if [[ $localedef_exit_code -ne 0 && $localedef_exit_code -ne 1 ]]; then
-    echo >&2 "Unexpected exit code from localedef, expected 0 or 1, got: $localedef_exit_code"
-    exit 1
-  fi
+  # Locales required by Postgres.
+  local locale_names=(
+    "de_DE"
+    "es_ES"
+    "fr_FR"
+    "it_IT"
+    "ja_JP"
+    "ko_KR"
+    "pl_PL"
+    "ru_RU"
+    "sv_SE"
+    "tr_TR"
+    "zh_CN"
+  )
+  local locale_name
+  for locale_name in "${locale_names[@]}"; do
+    local localedef_err_path=/tmp/localedef.err
+    set +e
+    (
+      set -x
+      # See the link below regarding avoiding some of the errors.
+      # We treat any errors in stderr as fatal.
+      # https://stackoverflow.com/questions/30736238/centos-7-docker-image-and-locale-compilation
+      localedef --force \
+                --quiet \
+                "--inputfile=${locale_name}" \
+                "--charmap=UTF-8" \
+                "${locale_name}.UTF-8"
+        2>"${localedef_err_path}"
+    )
+    local localedef_exit_code=$?
+    set -e
+    local failure=false
+    if [[ ${localedef_exit_code} -ne 0 &&
+          ${localedef_exit_code} -ne 1 ]]; then
+      echo >&2 "localedef returned exit code ${localedef_exit_code} (expecting 0 or 1)"
+      failure=true
+    fi
+    if [[ -s ${localedef_err_path} ]]; then
+      echo >&2 "Non-empty error output from localedef:"
+      cat >&2 "${localedef_err_path}"
+      failure=true
+    fi
+    rm -f "${localedef_err_path}"
+    if [[ ${failure} == "true" ]]; then
+      exit 1
+    fi
+  done
 }
 
 yb_debian_init() {
@@ -230,8 +242,65 @@ yb_install_spark() {
   yb_end_group
 }
 
+yb_yum_cleanup() {
+  yb_start_group "Yum cleanup"
+  ( set -x; yum clean all )
+  yb_end_group
+}
+
+yb_install_golang() {
+  yb_start_group "Installing Golang"
+
+  local go_version=1.19.2
+  local expected_sha256
+  local arch_in_pkg_name
+  case "$( uname -m )" in
+    aarch64)
+      expected_sha256=b62a8d9654436c67c14a0c91e931d50440541f09eb991a987536cb982903126d
+      arch_in_pkg_name=arm64
+    ;;
+    x86_64)
+      expected_sha256=5e8c5a74fe6470dd7e055a461acda8bb4050ead8c2df70f227e3ff7d8eb7eeb6
+      arch_in_pkg_name=amd64
+    ;;
+    *)
+      echo >&2 "Unknown architecture $( uname -m )"
+      exit 1
+    ;;
+  esac
+
+  local go_archive_name="go${go_version}.linux-${arch_in_pkg_name}.tar.gz"
+  local go_url="https://go.dev/dl/${go_archive_name}"
+  local tmp_dir="/tmp/go_installation"
+  local go_install_parent_dir="/opt/go"
+  local go_install_path="${go_install_parent_dir}/go-${go_version}"
+  local go_latest_dir_link="${go_install_parent_dir}/latest"
+  mkdir -p "${tmp_dir}"
+  (
+    cd "${tmp_dir}"
+    curl --location --silent --remote-name "${go_url}"
+    actual_sha256=$( sha256sum "${go_archive_name}" | awk '{print $1}' )
+    if [[ ${actual_sha256} != "${expected_sha256}" ]]; then
+      echo >&2 "Invalid SHA256 sum of ${go_archive_name}: expected ${expected_sha256}, got" \
+               "${actual_sha256}"
+      exit 1
+    fi
+    tar xzf "${go_archive_name}"
+    mkdir -p "${go_install_parent_dir}"
+    mv go "${go_install_path}"
+    mkdir -p /usr/local/bin
+    ln -s "${go_install_path}" "${go_latest_dir_link}"
+    for binary_name in go gofmt; do
+      ln -s "${go_latest_dir_link}/bin/${binary_name}" "/usr/local/bin/${binary_name}"
+    done
+  )
+  rm -rf "${tmp_dir}"
+  yb_end_group
+}
+
 yb_perform_os_independent_steps() {
   yb_create_yugabyteci_user
+  yb_install_golang
   yb_install_hub_tool
   yb_install_shellcheck
   yb_install_maven
@@ -239,8 +308,24 @@ yb_perform_os_independent_steps() {
   yb_install_spark
 }
 
-yb_yum_cleanup() {
-  start_group "Yum cleanup"
-  yum clean all
-  end_group
+run_cmd_hide_output_if_ok() {
+  local out_prefix
+  out_prefix=/tmp/cmd_output_$( date +%Y-%m-%dT%H_%M_%S )_${RANDOM}_${RANDOM}_${RANDOM}
+  local stdout_path=${out_prefix}.out
+  local stderr_path=${out_prefix}.err
+  set +e
+  ( set -x; "$@" >"${stdout_path}" 2>"${stderr_path}" )
+  local exit_code=$?
+  set -e
+  if [[ ${exit_code} != 0 ]]; then
+    (
+      echo "Command failed with with exit code ${exit_code}: $*"
+      echo "Standard output from command: $*"
+      cat "${stdout_path}"
+      echo "Standard error from command: $*"
+      cat "${stderr_path}"
+    ) >&2
+    exit "${exit_code}"
+  fi
+  rm -f "${stdout_path}" "${stderr_path}"
 }
