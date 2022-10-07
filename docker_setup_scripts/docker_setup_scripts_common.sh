@@ -34,6 +34,7 @@ yb_redhat_init_locale() {
   # Locales required by Postgres.
   local locale_names=(
     "de_DE"
+    "en_US"
     "es_ES"
     "fr_FR"
     "it_IT"
