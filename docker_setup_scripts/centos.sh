@@ -123,12 +123,12 @@ detect_os_version() {
 
 add_repos() {
   local repos=()
-  if [[ $centos_major_version -eq 7 ]]; then
+  if [[ $os_major_version -eq 7 ]]; then
     repos+=( "${CENTOS7_ONLY_REPOS[@]}" )
-  elif [[ $centos_major_version -eq 8 ]]; then
+  elif [[ $os_major_version -eq 8 ]]; then
     repos+=( "${RHEL8_ONLY_REPOS[@]}" )
   else
-    echo "Unknown CentOS major version: $centos_major_version" >&2
+    echo "Unknown CentOS major version: $os_major_version" >&2
     exit 1
   fi
 
