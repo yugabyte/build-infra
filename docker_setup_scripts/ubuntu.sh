@@ -13,6 +13,7 @@ packages=(
   apt-file
   apt-utils
   automake
+  bazel
   bison
   cmake
   curl

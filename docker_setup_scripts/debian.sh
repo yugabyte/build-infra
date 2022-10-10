@@ -8,7 +8,9 @@ set -euo pipefail
 packages=(
   apt-file
   apt-utils
+  apt-transport-https
   automake
+  bazel
   bison
   curl
   flex

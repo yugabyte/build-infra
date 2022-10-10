@@ -98,6 +98,16 @@ yb_end_group() {
   echo "::endgroup::"
 }
 
+yb_apt_add_packages() {
+  # Add Bazel package.
+  apt-get install -y apt-transport-https curl gnupg
+  curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+  mv bazel.gpg /etc/apt/trusted.gpg.d/
+  echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" > \
+      /etc/apt/sources.list.d/bazel.list
+  apt-get update
+}
+
 yb_apt_get_dist_upgrade() {
   yb_start_group "apt-get update and dist-upgrade"
   apt-get update
@@ -164,6 +174,7 @@ yb_debian_configure_and_install_packages() {
   local packages=( "$@" )
 
   yb_apt_get_dist_upgrade
+  yb_apt_add_packages
   yb_debian_init
   yb_apt_install_packages_separately "${packages[@]}"
   yb_apt_cleanup
@@ -299,6 +310,17 @@ yb_install_golang() {
   yb_end_group
 }
 
+readonly GO_PACKAGES=( github.com/bazelbuild/buildtools/buildozer@5.1.0 )
+yb_install_go_packages() {
+  GOPATH=$HOME/go
+  local package
+  for package in "${GO_PACKAGES[@]}"; do
+    go install "${package}"
+  done
+  mv "$GOPATH/bin/"* /usr/local/bin
+  rm -rf "$GOPATH"
+}
+
 yb_perform_os_independent_steps() {
   yb_create_yugabyteci_user
   yb_install_golang
@@ -307,6 +329,7 @@ yb_perform_os_independent_steps() {
   yb_install_maven
   yb_create_opt_yb_build_hierarchy
   yb_install_spark
+  yb_install_go_packages
 }
 
 run_cmd_hide_output_if_ok() {
