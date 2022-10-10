@@ -135,7 +135,7 @@ add_repos() {
   for repo in "${repos[@]}"; do
     (
       cd /etc/yum.repos.d/
-      curl -O ${repo}
+      curl -O "${repo}"
     )
   done
 }

@@ -103,7 +103,8 @@ yb_apt_add_packages() {
   apt-get install -y apt-transport-https curl gnupg
   curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
   mv bazel.gpg /etc/apt/trusted.gpg.d/
-  echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" > /etc/apt/sources.list.d/bazel.list
+  echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" > \
+      /etc/apt/sources.list.d/bazel.list
   apt-get update
 }
 
@@ -312,6 +313,7 @@ yb_install_golang() {
 readonly GO_PACKAGES=( github.com/bazelbuild/buildtools/buildozer@5.1.0 )
 yb_install_go_packages() {
   GOPATH=$HOME/go
+  local package
   for package in "${GO_PACKAGES[@]}"; do
     go install "${package}"
   done
