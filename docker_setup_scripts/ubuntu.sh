@@ -61,6 +61,14 @@ if [[ $ubuntu_major_version -ge 22 ]]; then
   packages+=( g++-11 )
 fi
 
+if [[ $ubuntu_major_version -le 18 ]]; then
+  packages+=(
+    python-pip
+    python-dev
+    g++-8
+  )
+fi
+
 yb_debian_configure_and_install_packages "${packages[@]}"
 yb_perform_os_independent_steps
 yb_remove_build_infra_scripts
