@@ -22,9 +22,9 @@ readonly TOOLSET_PACKAGE_SUFFIXES_RHEL8=(
   gcc-c++
 )
 
-readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64=( 8 9 10 11 )
-readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64=( 8 9 10 )
-readonly RHEL8_GCC_TOOLSETS_TO_INSTALL=( 9 10 11 )
+readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64=( 11 )
+readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64=( 10 )
+readonly RHEL8_GCC_TOOLSETS_TO_INSTALL=( 11 )
 
 readonly CENTOS7_ONLY_REPOS=(
   https://copr.fedorainfracloud.org/coprs/vbatts/bazel/repo/epel-7/vbatts-bazel-epel-7.repo
@@ -86,7 +86,6 @@ readonly CENTOS7_ONLY_PACKAGES=(
 readonly RHEL8_ONLY_PACKAGES=(
   libselinux
   libselinux-devel
-  llvm-toolset
   python38
   python38-devel
   python38-pip

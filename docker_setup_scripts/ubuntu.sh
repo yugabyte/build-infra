@@ -13,7 +13,6 @@ packages=(
   apt-file
   apt-utils
   automake
-  bazel
   bison
   cmake
   curl
@@ -49,8 +48,13 @@ packages=(
   xz-utils
 )
 
+if [[ $( uname -m ) == "x86_64" ]]; then
+  # TODO: figure out how to install Bazel on aarch64.
+  packages+=( bazel )
+fi
+
 if [[ $ubuntu_major_version -ge 20 ]]; then
-  packages+=( g++-9 g++-10 )
+  packages+=( g++-10 )
 fi
 
 if [[ $ubuntu_major_version -ge 22 ]]; then
