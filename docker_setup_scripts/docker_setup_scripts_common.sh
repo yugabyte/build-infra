@@ -164,7 +164,6 @@ yb_debian_configure_and_install_packages() {
   local packages=( "$@" )
 
   yb_apt_get_dist_upgrade
-  yb_apt_add_packages
   yb_debian_init
   yb_apt_install_packages_separately "${packages[@]}"
   yb_apt_cleanup
