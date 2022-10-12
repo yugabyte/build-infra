@@ -98,16 +98,6 @@ yb_end_group() {
   echo "::endgroup::"
 }
 
-yb_apt_add_packages() {
-  # Add Bazel package.
-  apt-get install -y apt-transport-https curl gnupg
-  curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
-  mv bazel.gpg /etc/apt/trusted.gpg.d/
-  echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" > \
-      /etc/apt/sources.list.d/bazel.list
-  apt-get update
-}
-
 yb_apt_get_dist_upgrade() {
   yb_start_group "apt-get update and dist-upgrade"
   apt-get update
@@ -310,6 +300,53 @@ yb_install_golang() {
   yb_end_group
 }
 
+yb_install_bazel() {
+  local bazel_version=5.3.1
+  yb_start_group "Installing Bazel ${bazel_version}"
+
+  local expected_sha256
+  local arch_in_pkg_name
+  case "$( uname -m )" in
+    aarch64)
+      expected_sha256=42b92684d39c1a7a14f73ca3543d57f22689ec7ccc80b4dcaac061abffccd288
+      arch_in_pkg_name=arm64
+    ;;
+    x86_64)
+      expected_sha256=f680a8a35789fb550c966a9a6661349af6993edd5ebf85bfb0f22e968c78115a
+      arch_in_pkg_name=x86_64
+    ;;
+    *)
+      echo >&2 "Unknown architecture $( uname -m )"
+      exit 1
+    ;;
+  esac
+
+  local bazel_archive_name="bazel-${bazel_version}-linux-${arch_in_pkg_name}"
+  local bazel_downloads_url="https://github.com/bazelbuild/bazel/releases/download/${bazel_version}"
+  local bazel_url="${bazel_downloads_url}/${bazel_archive_name}"
+  local bazel_install_parent_dir="/opt/bazel"
+  local bazel_install_path="${bazel_install_parent_dir}/${bazel_archive_name}"
+
+  (
+    mkdir -p "${bazel_install_parent_dir}"
+    cd "${bazel_install_parent_dir}"
+    curl --location --remote-name "${bazel_url}"
+    chmod +x "${bazel_archive_name}"
+    actual_sha256=$( sha256sum "${bazel_archive_name}" | awk '{print $1}' )
+    if [[ ${actual_sha256} != "${expected_sha256}" ]]; then
+      echo >&2 "Invalid SHA256 sum of ${bazel_archive_name}: expected ${expected_sha256}, got" \
+                "${actual_sha256}"
+      exit 1
+    fi
+    mkdir -p /usr/local/bin
+    ln -s "${bazel_install_path}" "/usr/local/bin/bazel"
+  )
+
+  # Test that Bazel works.
+  bazel --version
+  yb_end_group
+}
+
 readonly GO_PACKAGES=( github.com/bazelbuild/buildtools/buildozer@5.1.0 )
 yb_install_go_packages() {
   GOPATH=$HOME/go
@@ -330,6 +367,7 @@ yb_perform_os_independent_steps() {
   yb_create_opt_yb_build_hierarchy
   yb_install_spark
   yb_install_go_packages
+  yb_install_bazel
 }
 
 run_cmd_hide_output_if_ok() {

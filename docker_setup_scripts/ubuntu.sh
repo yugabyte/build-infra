@@ -48,11 +48,6 @@ packages=(
   xz-utils
 )
 
-if [[ $( uname -m ) == "x86_64" ]]; then
-  # TODO: figure out how to install Bazel on aarch64.
-  packages+=( bazel )
-fi
-
 if [[ $ubuntu_major_version -ge 20 ]]; then
   packages+=( g++-10 )
 fi

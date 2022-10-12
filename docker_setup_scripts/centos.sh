@@ -26,17 +26,9 @@ readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64=( 11 )
 readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64=( 10 )
 readonly RHEL8_GCC_TOOLSETS_TO_INSTALL=( 11 )
 
-readonly CENTOS7_ONLY_REPOS=(
-  https://copr.fedorainfracloud.org/coprs/vbatts/bazel/repo/epel-7/vbatts-bazel-epel-7.repo
-)
-readonly RHEL8_ONLY_REPOS=(
-  https://copr.fedorainfracloud.org/coprs/vbatts/bazel/repo/epel-8/vbatts-bazel-epel-8.repo
-)
-
 # Packages installed on all supported versions of CentOS.
 readonly CENTOS_COMMON_PACKAGES=(
   autoconf
-  bazel5
   bind-utils
   bzip2
   bzip2-devel
@@ -118,25 +110,6 @@ detect_os_version() {
     exit 1
   fi
   readonly os_major_version
-}
-
-add_repos() {
-  local repos=()
-  if [[ $os_major_version -eq 7 ]]; then
-    repos+=( "${CENTOS7_ONLY_REPOS[@]}" )
-  elif [[ $os_major_version -eq 8 ]]; then
-    repos+=( "${RHEL8_ONLY_REPOS[@]}" )
-  else
-    echo "Unknown CentOS major version: $os_major_version" >&2
-    exit 1
-  fi
-
-  for repo in "${repos[@]}"; do
-    (
-      cd /etc/yum.repos.d/
-      curl -O "${repo}"
-    )
-  done
 }
 
 install_packages() {
@@ -222,8 +195,6 @@ install_packages() {
 # -------------------------------------------------------------------------------------------------
 
 detect_os_version
-
-add_repos
 
 install_packages
 
