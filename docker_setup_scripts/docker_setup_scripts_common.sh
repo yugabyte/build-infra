@@ -59,7 +59,7 @@ yb_redhat_init_locale() {
                 --quiet \
                 "--inputfile=${locale_name}" \
                 "--charmap=UTF-8" \
-                "${locale_name}.UTF-8"
+                "${locale_name}.UTF-8" \
         2>"${localedef_err_path}"
     )
     local localedef_exit_code=$?
