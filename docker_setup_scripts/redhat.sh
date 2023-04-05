@@ -27,7 +27,7 @@ readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64=( 10 )
 readonly RHEL8_GCC_TOOLSETS_TO_INSTALL=( 11 )
 
 # Packages installed on all supported versions of CentOS.
-readonly CENTOS_COMMON_PACKAGES=(
+readonly REDHAT_COMMON_PACKAGES=(
   autoconf
   bind-utils
   bzip2
@@ -96,9 +96,10 @@ detect_os_version() {
     grep -E ^VERSION= /etc/os-release | sed 's/VERSION=//; s/"//g' | awk '{print $1}'
   )
   os_major_version=${os_major_version%%.*}
-  if [[ ! $os_major_version =~ ^[78]$ ]]; then
+  if [[ ! $os_major_version =~ ^[789]$ ]]; then
     (
-      echo "Unsupported major version of CentOS/RHEL: $os_major_version (from /etc/os-release)"
+      echo "Unsupported major version of CentOS/AlmaLinux/RHEL: $os_major_version"
+      echo "(from /etc/os-release)"
       echo
       echo "--------------------------------------------------------------------------------------"
       echo "Contents of /etc/os-release"
@@ -106,14 +107,14 @@ detect_os_version() {
       cat /etc/os-release
       echo "--------------------------------------------------------------------------------------"
       echo
-    )
+    ) >&2
     exit 1
   fi
   readonly os_major_version
 }
 
 install_packages() {
-  local packages=( "${CENTOS_COMMON_PACKAGES[@]}" )
+  local packages=( "${REDHAT_COMMON_PACKAGES[@]}" )
 
   local toolset_prefix
   local gcc_toolsets_to_install
