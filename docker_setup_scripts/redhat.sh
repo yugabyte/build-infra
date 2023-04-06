@@ -223,6 +223,8 @@ if [[ $os_major_version -eq 7 ]]; then
   yb_install_python3_from_source
 fi
 
-# yb_redhat_init_locale
+if [[ $os_major_version -lt 9 ]]; then
+  yb_redhat_init_locale
+fi
 
 yb_remove_build_infra_scripts
