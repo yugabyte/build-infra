@@ -65,7 +65,9 @@ while [[ $# -gt 0 ]]; do
       shift
     ;;
     *)
-      fatal "Unknown command: $1"
+      print_usage >&2
+      echo >&2
+      fatal "Unknown option: $1"
   esac
   shift
 done
