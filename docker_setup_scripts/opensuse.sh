@@ -53,7 +53,7 @@ packages=(
 # -------------------------------------------------------------------------------------------------
 
 yb_zypper_install_packages_separately "${packages[@]}"
-yb_perform_os_independent_steps
+yb_perform_universal_steps
 yb_remove_build_infra_scripts
 
 zypper clean

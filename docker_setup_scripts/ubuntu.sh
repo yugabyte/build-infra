@@ -65,5 +65,5 @@ if [[ $ubuntu_major_version -le 18 ]]; then
 fi
 
 yb_debian_configure_and_install_packages "${packages[@]}"
-yb_perform_os_independent_steps
+yb_perform_universal_steps
 yb_remove_build_infra_scripts

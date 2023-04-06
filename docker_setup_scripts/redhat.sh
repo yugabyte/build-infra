@@ -34,10 +34,8 @@ readonly REDHAT_COMMON_PACKAGES=(
   bzip2-devel
   ccache
   chrpath
-  curl
   gcc
   gcc-c++
-  gdbm-devel
   git
   glibc-all-langpacks
   java-1.8.0-openjdk
@@ -56,8 +54,6 @@ readonly REDHAT_COMMON_PACKAGES=(
   php
   php-common
   php-curl
-  python2
-  python2-pip
   readline-devel
   rsync
   ruby
@@ -85,6 +81,13 @@ readonly RHEL8_ONLY_PACKAGES=(
 
   glibc-locale-source
   glibc-langpack-en
+)
+
+readonly RHEL7_8_ONLY_PACKAGES=(
+  gdbm-devel
+  python2
+  python2-pip
+  curl
 )
 
 # -------------------------------------------------------------------------------------------------
@@ -137,14 +140,19 @@ install_packages() {
     esac
     package_manager=yum
     packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
+    packages+=( "${RHEL7_8_ONLY_PACKAGES[@]}" )
   elif [[ $os_major_version -eq 8 ]]; then
     toolset_prefix="gcc-toolset"
     gcc_toolsets_to_install=( "${RHEL8_GCC_TOOLSETS_TO_INSTALL[@]}" )
     toolset_package_suffixes+=( "${TOOLSET_PACKAGE_SUFFIXES_RHEL8[@]}" )
     package_manager=dnf
     packages+=( "${RHEL8_ONLY_PACKAGES[@]}" )
+    packages+=( "${RHEL7_8_ONLY_PACKAGES[@]}" )
+  elif [[ $os_major_version -eq 9 ]]; then
+    gcc_toolsets_to_install=()
+    package_manager=dnf
   else
-    echo "Unknown CentOS major version: $os_major_version" >&2
+    echo "Unknown RHEL family OS major version: $os_major_version" >&2
     exit 1
   fi
 
@@ -201,7 +209,7 @@ install_packages
 
 yb_yum_cleanup
 
-yb_perform_os_independent_steps
+yb_perform_universal_steps
 
 yb_install_cmake
 yb_install_ninja
@@ -210,6 +218,6 @@ if [[ $os_major_version -eq 7 ]]; then
   yb_install_python3_from_source
 fi
 
-yb_redhat_init_locale
+# yb_redhat_init_locale
 
 yb_remove_build_infra_scripts

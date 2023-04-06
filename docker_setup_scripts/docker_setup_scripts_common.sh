@@ -357,7 +357,7 @@ yb_install_go_packages() {
   rm -rf "$GOPATH"
 }
 
-yb_perform_os_independent_steps() {
+yb_perform_universal_steps() {
   yb_create_yugabyteci_user
   yb_install_golang
   yb_install_hub_tool
