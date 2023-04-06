@@ -26,10 +26,11 @@ jobs:
       matrix:
         image_name:
           - centos7
+          - almalinux8
+          - almalinux9
           - ubuntu1804
           - ubuntu2004
           - ubuntu2204
-          - almalinux8
 
     runs-on: ubuntu-latest
     if: >
