@@ -18,6 +18,9 @@ readonly TOOLSET_PACKAGE_SUFFIXES_COMMON=(
 
 readonly TOOLSET_PACKAGE_SUFFIXES_RHEL8=(
   toolchain
+)
+
+readonly TOOLSET_PACKAGE_SUFFIXES_RHEL8_9=(
   gcc
   gcc-c++
 )
@@ -25,6 +28,7 @@ readonly TOOLSET_PACKAGE_SUFFIXES_RHEL8=(
 readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64=( 11 )
 readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64=( 10 )
 readonly RHEL8_GCC_TOOLSETS_TO_INSTALL=( 11 )
+readonly RHEL9_GCC_TOOLSETS_TO_INSTALL=( 12 )
 
 # Packages installed on all supported versions of CentOS.
 readonly REDHAT_COMMON_PACKAGES=(
@@ -85,18 +89,38 @@ readonly RHEL8_ONLY_PACKAGES=(
 
 readonly RHEL7_8_ONLY_PACKAGES=(
   gdbm-devel
-  python2
-  python2-pip
   curl
 )
 
+# Attempting to install curl on AlmaLinux 9 leads to the following error:
+#
+# https://gist.githubusercontent.com/mbautin/65b076bdb6a621de721df91ff66c1579/raw
+#
+# We are making sure that curl-minimal is installed instead, for clarity. However, it is required by
+# dnf so it will always be installed anyway.
 readonly RHEL9_ONLY_PACKAGES=(
   perl-FindBin
+  curl-minimal
 )
 
 # -------------------------------------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------------------------------------
+
+yb_fatal_unsupported_rhel_major_version() {
+  (
+    echo "Unsupported major version of CentOS/AlmaLinux/RHEL: $os_major_version"
+    echo "(from /etc/os-release)"
+    echo
+    echo "--------------------------------------------------------------------------------------"
+    echo "Contents of /etc/os-release"
+    echo "--------------------------------------------------------------------------------------"
+    cat /etc/os-release
+    echo "--------------------------------------------------------------------------------------"
+    echo
+  ) >&2
+  exit 1
+}
 
 detect_os_version() {
   os_major_version=$(
@@ -104,18 +128,7 @@ detect_os_version() {
   )
   os_major_version=${os_major_version%%.*}
   if [[ ! $os_major_version =~ ^[789]$ ]]; then
-    (
-      echo "Unsupported major version of CentOS/AlmaLinux/RHEL: $os_major_version"
-      echo "(from /etc/os-release)"
-      echo
-      echo "--------------------------------------------------------------------------------------"
-      echo "Contents of /etc/os-release"
-      echo "--------------------------------------------------------------------------------------"
-      cat /etc/os-release
-      echo "--------------------------------------------------------------------------------------"
-      echo
-    ) >&2
-    exit 1
+    yb_fatal_unsupported_rhel_major_version
   fi
   readonly os_major_version
 }
@@ -123,43 +136,49 @@ detect_os_version() {
 install_packages() {
   local packages=( "${REDHAT_COMMON_PACKAGES[@]}" )
 
-  local toolset_prefix
-  local gcc_toolsets_to_install
-  local package_manager
+  # The settings below are used on RHEL 8 and later. We override them for CentOS 7.
+  local toolset_prefix="gcc-toolset"
+  local package_manager=dnf
+
+  local gcc_toolsets_to_install=()
   local toolset_package_suffixes=( "${TOOLSET_PACKAGE_SUFFIXES_COMMON[@]}" )
-  if [[ $os_major_version -eq 7 ]]; then
-    toolset_prefix="devtoolset"
-    local gcc_toolsets_to_install
-    case "$( uname -m )" in
-      x86_64)
-        gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64[@]}" )
-      ;;
-      aarch64)
-        gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64[@]}" )
-      ;;
-      *)
-        echo >&2 "Unknown architecture: $( uname -m )"
-        exit 1
-      ;;
-    esac
-    package_manager=yum
-    packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
-    packages+=( "${RHEL7_8_ONLY_PACKAGES[@]}" )
-  elif [[ $os_major_version -eq 8 ]]; then
-    toolset_prefix="gcc-toolset"
-    gcc_toolsets_to_install=( "${RHEL8_GCC_TOOLSETS_TO_INSTALL[@]}" )
-    toolset_package_suffixes+=( "${TOOLSET_PACKAGE_SUFFIXES_RHEL8[@]}" )
-    package_manager=dnf
-    packages+=( "${RHEL8_ONLY_PACKAGES[@]}" )
-    packages+=( "${RHEL7_8_ONLY_PACKAGES[@]}" )
-  elif [[ $os_major_version -eq 9 ]]; then
-    gcc_toolsets_to_install=()
-    package_manager=dnf
-    packages+=( "${RHEL9_ONLY_PACKAGES[@]}" )
-  else
-    echo "Unknown RHEL family OS major version: $os_major_version" >&2
-    exit 1
-  fi
+  case "${os_major_version}" in
+    7)
+      toolset_prefix="devtoolset"
+      case "$( uname -m )" in
+        x86_64)
+          gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64[@]}" )
+        ;;
+        aarch64)
+          gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64[@]}" )
+        ;;
+        *)
+          yb_fatal_unknown_architecture
+      esac
+      package_manager=yum
+      packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
+      packages+=( "${RHEL7_8_ONLY_PACKAGES[@]}" )
+    ;;
+    8)
+      gcc_toolsets_to_install=( "${RHEL8_GCC_TOOLSETS_TO_INSTALL[@]}" )
+      toolset_package_suffixes+=(
+        "${TOOLSET_PACKAGE_SUFFIXES_RHEL8[@]}"
+        "${TOOLSET_PACKAGE_SUFFIXES_RHEL8_9[@]}"
+      )
+      packages+=( "${RHEL8_ONLY_PACKAGES[@]}" )
+      packages+=( "${RHEL7_8_ONLY_PACKAGES[@]}" )
+    ;;
+    9)
+      gcc_toolsets_to_install=( "${RHEL9_GCC_TOOLSETS_TO_INSTALL[@]}" )
+      toolset_package_suffixes+=(
+        "${TOOLSET_PACKAGE_SUFFIXES_RHEL8_9[@]}"
+      )
+      package_manager=dnf
+      packages+=( "${RHEL9_ONLY_PACKAGES[@]}" )
+    ;;
+    *)
+      yb_fatal_unsupported_rhel_major_version
+  esac
 
   local gcc_toolset_version
   for gcc_toolset_version in "${gcc_toolsets_to_install[@]}"; do

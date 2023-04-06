@@ -390,3 +390,8 @@ run_cmd_hide_output_if_ok() {
   fi
   rm -f "${stdout_path}" "${stderr_path}"
 }
+
+yb_fatal_unknown_architecture() {
+  echo >&2 "Unknown architecture: $( uname -m )"
+  exit 1
+}
