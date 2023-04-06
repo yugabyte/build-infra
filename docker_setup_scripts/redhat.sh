@@ -90,6 +90,10 @@ readonly RHEL7_8_ONLY_PACKAGES=(
   curl
 )
 
+readonly RHEL9_ONLY_PACKAGES=(
+  perl-FindBin
+)
+
 # -------------------------------------------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------------------------------------------
@@ -151,6 +155,7 @@ install_packages() {
   elif [[ $os_major_version -eq 9 ]]; then
     gcc_toolsets_to_install=()
     package_manager=dnf
+    packages+=( "${RHEL9_ONLY_PACKAGES[@]}" )
   else
     echo "Unknown RHEL family OS major version: $os_major_version" >&2
     exit 1
