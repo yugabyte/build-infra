@@ -357,7 +357,7 @@ yb_install_go_packages() {
   rm -rf "$GOPATH"
 }
 
-yb_perform_os_independent_steps() {
+yb_perform_universal_steps() {
   yb_create_yugabyteci_user
   yb_install_golang
   yb_install_hub_tool
@@ -389,4 +389,9 @@ run_cmd_hide_output_if_ok() {
     exit "${exit_code}"
   fi
   rm -f "${stdout_path}" "${stderr_path}"
+}
+
+yb_fatal_unknown_architecture() {
+  echo >&2 "Unknown architecture: $( uname -m )"
+  exit 1
 }
