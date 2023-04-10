@@ -17,10 +17,11 @@ the following Docker images for x86_64.
 
 ## aarch64 images
 
-Also, the following aarch64 images have been built manually.
+Also, the following aarch64 images have been built manually. It might be possible to automate these builds too in the future, e.g. using CircleCI.
 
 - CentOS 7: https://hub.docker.com/r/yugabyteci/yb_build_infra_centos7_aarch64/tags
 - AlmaLinux 8: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux8_aarch64/tags
+- AlmaLinux 9: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux9_aarch64/tags
 - Ubuntu 20.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2004_aarch64/tags
 - Ubuntu 22.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2204_aarch64/tags
 
