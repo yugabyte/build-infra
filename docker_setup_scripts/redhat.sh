@@ -101,6 +101,7 @@ readonly RHEL7_8_ONLY_PACKAGES=(
 readonly RHEL9_ONLY_PACKAGES=(
   perl-FindBin
   curl-minimal
+  python3-devel
 )
 
 # -------------------------------------------------------------------------------------------------
