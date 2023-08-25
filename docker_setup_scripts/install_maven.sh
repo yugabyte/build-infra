@@ -2,13 +2,13 @@
 
 set -euo pipefail -x
 
-readonly MAVEN_VERSION=3.6.3
+readonly MAVEN_VERSION=3.9.4
 
 install_maven() {
   local version=$MAVEN_VERSION
   local maven_dir_name=apache-maven-$version
   local tarball_name=$maven_dir_name-bin.tar.gz
-  local url="https://apache.osuosl.org/maven/maven-3/$version/binaries/$tarball_name"
+  local url="https://dlcdn.apache.org/maven/maven-3/$version/binaries/$tarball_name"
   local maven_tmp_dir=/tmp/install_maven
   local dest_dir=/usr/share/$maven_dir_name
   local mvn_link_path=/usr/local/bin/mvn
@@ -24,7 +24,7 @@ install_maven() {
     curl -O "$url"
     local actual_sha256sum
     actual_sha256sum=$( sha256sum "$tarball_name" | awk '{print $1}' )
-    local expected_sha256sum=26ad91d751b3a9a53087aefa743f4e16a17741d3915b219cf74112bf87a438c5
+    local expected_sha256sum=ff66b70c830a38d331d44f6c25a37b582471def9a161c93902bac7bea3098319
     if [[ $actual_sha256sum != "$expected_sha256sum" ]]; then
       echo "Invalid checksum: $actual_sha256sum, expected: $expected_sha256sum" >&2
       exit 1

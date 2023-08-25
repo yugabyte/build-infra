@@ -73,6 +73,9 @@ readonly CENTOS7_ONLY_PACKAGES=(
   python-devel
   libselinux-python
   libsemanage-python
+  rh-python38-devel
+  rh-python38-python-devel
+  rh-python38-python-pip
 )
 
 readonly RHEL8_ONLY_PACKAGES=(
@@ -224,6 +227,18 @@ install_packages() {
   yb_end_group
 }
 
+yb_configure_python38_on_centos7() {
+  local python38_root=/opt/rh/rh-python38/root
+  update-alternatives --install /usr/local/bin/python3 python3 "$python38_root/bin/python3" 1000
+  (
+    set +eu
+    . "$python38_root/../enable"
+    set -eu
+    pip3 install --upgrade pip
+    update-alternatives --install /usr/local/bin/pip3 pip3 "$( which pip )" 1000
+  )
+}
+
 # -------------------------------------------------------------------------------------------------
 # Main script
 # -------------------------------------------------------------------------------------------------
@@ -240,7 +255,7 @@ yb_install_cmake
 yb_install_ninja
 
 if [[ $os_major_version -eq 7 ]]; then
-  yb_install_python3_from_source
+  yb_configure_python38_on_centos7
 fi
 
 if [[ $os_major_version -lt 9 ]]; then
