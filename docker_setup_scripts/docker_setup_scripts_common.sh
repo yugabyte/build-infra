@@ -231,12 +231,6 @@ yb_install_maven() {
   yb_end_group
 }
 
-yb_install_python3_from_source() {
-  yb_start_group "Installing Python 3 from source"
-  bash "$yb_build_infra_scripts_dir/install_python3_from_source.sh"
-  yb_end_group
-}
-
 yb_install_spark() {
   yb_start_group "Installing Spark"
   bash "$yb_build_infra_scripts_dir/install_spark.sh"
