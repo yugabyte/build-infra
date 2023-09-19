@@ -48,7 +48,7 @@ packages=(
   xz-utils
 )
 
-if [[ $ubuntu_major_version -ge 20 ]]; then
+if [[ $ubuntu_major_version -eq 20 ]]; then
   packages+=( g++-10 )
 fi
 
