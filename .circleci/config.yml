@@ -2,25 +2,54 @@
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/configuration-reference/#executor-job
-    docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/configuration-reference/#steps
+  build:
+    parameters:
+      image_name:
+        type: string
+      
+    machine:
+      image: ubuntu-2204:current
+      resource_class: arm.large
+
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
-
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/configuration-reference/#workflows
+          name: Build and push the image
+          command: |
+            github_org=${GITHUB_ORG_AND_REPO%%/*}
+            if [[ $github_org == "yugabyte" ]]; then
+              dockerhub_org="yugabyteci"
+              dockerhub_user="yugabyteci"
+            else
+              dockerhub_org=$github_org
+              dockerhub_user=$github_org
+            fi
+            bin/build_docker_images.sh \
+              -i ${{ matrix.image_name }} \
+              --tag_prefix "$dockerhub_org" \
+              --tag_output_file docker_tag.txt
+  
 workflows:
-  say-hello-workflow:
+  build-release:
     jobs:
-      - say-hello
+      # TODO: find a way to assign different names to each build.
+      # As specified below, they are named build-1, build-2, etc.
+
+      - build:
+          image_name: centos7
+
+      - build:
+          image_name: almalinux8
+
+      - build:
+          image_name: almalinux9
+
+      - build:
+          image_name: ubuntu2004
+
+      - build:
+          image_name: ubuntu2204
+
+      - build:
+          image_name: ubuntu2304
