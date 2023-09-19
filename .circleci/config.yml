@@ -5,6 +5,8 @@ version: 2.1
 jobs:
   build:
     parameters:
+      build-name:
+        type: string
       image_name:
         type: string
       
@@ -31,7 +33,7 @@ jobs:
               --tag_output_file docker_tag.txt
   
 workflows:
-  build-release:
+  build-workflow:
     jobs:
       # TODO: find a way to assign different names to each build.
       # As specified below, they are named build-1, build-2, etc.
