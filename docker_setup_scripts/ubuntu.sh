@@ -48,12 +48,16 @@ packages=(
   xz-utils
 )
 
-if [[ $ubuntu_major_version -ge 20 ]]; then
+if [[ $ubuntu_major_version -eq 20 ]]; then
   packages+=( g++-10 )
 fi
 
-if [[ $ubuntu_major_version -ge 22 ]]; then
+if [[ $ubuntu_major_version -eq 22 ]]; then
   packages+=( g++-11 )
+fi
+
+if [[ $ubuntu_major_version -eq 23 ]]; then
+  packages+=( g++-13 )
 fi
 
 if [[ $ubuntu_major_version -le 18 ]]; then
