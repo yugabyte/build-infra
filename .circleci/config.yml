@@ -5,8 +5,6 @@ version: 2.1
 jobs:
   build:
     parameters:
-      description:
-        type: string
       image_name:
         type: string
       
