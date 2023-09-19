@@ -7,6 +7,8 @@ jobs:
     parameters:
       image_name:
         type: string
+      arch:
+        type: string
       
     machine:
       image: ubuntu-2204:current
