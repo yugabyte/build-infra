@@ -37,19 +37,21 @@ workflows:
       # As specified below, they are named build-1, build-2, etc.
 
       - build:
+          build-name: "CentOS 7 (aarch64)"
           image_name: centos7
 
       - build:
+          build-name: "AlmaLinux 8 (aarch64)"
           image_name: almalinux8
 
       - build:
+          build-name: "AlmaLinux 9 (aarch64)"
           image_name: almalinux9
 
       - build:
+          build-name: "Ubuntu 20.04 (aarch64)"
           image_name: ubuntu2004
 
       - build:
+          build-name: "Ubuntu 22.04 (aarch64)"
           image_name: ubuntu2204
-
-      - build:
-          image_name: ubuntu2304
