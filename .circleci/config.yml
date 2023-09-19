@@ -17,7 +17,7 @@ jobs:
       - run:
           name: Build and push the image
           command: |
-            github_org=${GITHUB_ORG_AND_REPO%%/*}
+            github_org=${CIRCLE_PROJECT_USERNAME}
             if [[ $github_org == "yugabyte" ]]; then
               dockerhub_org="yugabyteci"
               dockerhub_user="yugabyteci"
@@ -26,7 +26,7 @@ jobs:
               dockerhub_user=$github_org
             fi
             bin/build_docker_images.sh \
-              -i ${{ matrix.image_name }} \
+              -i "<< parameters.image_name >>" \
               --tag_prefix "$dockerhub_org" \
               --tag_output_file docker_tag.txt
   
