@@ -5,7 +5,7 @@ version: 2.1
 jobs:
   build:
     parameters:
-      build-name:
+      description:
         type: string
       image_name:
         type: string
@@ -35,25 +35,14 @@ jobs:
 workflows:
   build-workflow:
     jobs:
-      # TODO: find a way to assign different names to each build.
-      # As specified below, they are named build-1, build-2, etc.
-
       - build:
-          build-name: "CentOS 7 (aarch64)"
-          image_name: centos7
-
-      - build:
-          build-name: "AlmaLinux 8 (aarch64)"
-          image_name: almalinux8
-
-      - build:
-          build-name: "AlmaLinux 9 (aarch64)"
-          image_name: almalinux9
-
-      - build:
-          build-name: "Ubuntu 20.04 (aarch64)"
-          image_name: ubuntu2004
-
-      - build:
-          build-name: "Ubuntu 22.04 (aarch64)"
-          image_name: ubuntu2204
+          matrix:
+            parameters:
+              image_name:
+                - centos7
+                - almalinux8
+                - almalinux9
+                - ubuntu2004
+                - ubuntu2204
+              arch:
+                - aarch64
