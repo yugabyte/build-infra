@@ -81,6 +81,7 @@ while [[ $# -gt 0 ]]; do
         echo "Invalid value of --is_pr: $is_pr (expected true/false)" >&2
         exit 1
       fi
+      shift
     ;;
     *)
       print_usage >&2
