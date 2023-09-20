@@ -103,8 +103,12 @@ if [[ -z $tag_prefix && -n $github_org ]]; then
     dockerhub_org=$github_org
     dockerhub_user=$github_org
   fi
-  echo "Using DockerHub organization: $dockerhub_org"
-  echo "Using DockerHub user name: $dockerhub_user"
+  log "Using DockerHub organization: $dockerhub_org"
+  log "Using DockerHub user name: $dockerhub_user"
+fi
+
+if [[ $is_pr == "true" && $should_push == "true" ]]; then
+  log "This is a pull request (--is_pr specified as true), will not push to DockerHub."
 fi
 
 if [[ -n $tag_prefix ]]; then
