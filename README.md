@@ -8,6 +8,8 @@ the following Docker images for x86_64.
 
 ## x86_64 images
 
+The following x86_64 Docker images get built by GitHub Actions automation:
+
 - CentOS 7: https://hub.docker.com/r/yugabyteci/yb_build_infra_centos7_x86_64/tags
 - AlmaLinux 8: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux8_x86_64/tags
 - AlmaLinux 9: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux9_x86_64/tags
@@ -18,7 +20,7 @@ the following Docker images for x86_64.
 
 ## aarch64 images
 
-Also, the following aarch64 images have been built manually. It might be possible to automate these builds too in the future, e.g. using CircleCI.
+The following aarch64 Docker images get built by CircleCI automation:
 
 - CentOS 7: https://hub.docker.com/r/yugabyteci/yb_build_infra_centos7_aarch64/tags
 - AlmaLinux 8: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux8_aarch64/tags
