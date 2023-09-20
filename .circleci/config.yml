@@ -44,7 +44,7 @@ jobs:
               --tag_prefix "$dockerhub_org" \
               --tag_output_file docker_tag.txt
 
-            if [[ -z ${CIRCLE_PR_NUMBER:-} ]]; then
+            if [[ -z ${CIRCLE_PULL_REQUEST:-} ]]; then
               echo "This is not a PR, doing a DockerHub push."
               echo "Logging into DockerHub as user '$dockerhub_user'"
               echo "${DOCKERHUB_TOKEN}" | \
@@ -54,7 +54,7 @@ jobs:
               echo "Docker tag: $docker_tag"
               ( set -x; docker push "$docker_tag" )
             else
-              echo "This is a PR, not doing a DockerHub push."
+              echo "This is a PR ( $CIRCLE_PULL_REQUEST ), not doing a DockerHub push."
             fi
 
 workflows:
