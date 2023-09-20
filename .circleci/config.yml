@@ -1,0 +1,73 @@
+# Copyright (c) YugabyteDB, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+# in compliance with the License.  You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+# or implied.  See the License for the specific language governing permissions and limitations
+# under the License.
+
+version: 2.1
+
+jobs:
+  build:
+    parameters:
+      image_name:
+        type: string
+      arch:
+        type: string
+      
+    machine:
+      image: ubuntu-2204:current
+      resource_class: arm.large
+
+    steps:
+      - checkout
+      - run:
+          name: Build and push the image
+          command: |
+            github_org=${CIRCLE_PROJECT_USERNAME}
+            if [[ $github_org == "yugabyte" ]]; then
+              dockerhub_org="yugabyteci"
+              dockerhub_user="yugabyteci"
+            else
+              dockerhub_org=$github_org
+              dockerhub_user=$github_org
+            fi
+            echo "DockerHub organization: $dockerhub_org"
+            echo "DockerHub user: $dockerhub_user"
+            bin/build_docker_images.sh \
+              -i "<< parameters.image_name >>" \
+              --tag_prefix "$dockerhub_org" \
+              --tag_output_file docker_tag.txt
+
+            if [[ -z ${CIRCLE_PULL_REQUEST:-} ]]; then
+              echo "This is not a PR, doing a DockerHub push."
+              echo "Logging into DockerHub as user '$dockerhub_user'"
+              echo "${DOCKERHUB_TOKEN}" | \
+                docker login -u "$dockerhub_user" --password-stdin
+
+              docker_tag=$(<docker_tag.txt)
+              echo "Docker tag: $docker_tag"
+              ( set -x; docker push "$docker_tag" )
+            else
+              echo "This is a PR ( $CIRCLE_PULL_REQUEST ), not doing a DockerHub push."
+            fi
+
+workflows:
+  build-workflow:
+    jobs:
+      - build:
+          matrix:
+            parameters:
+              image_name:
+                - centos7
+                - almalinux8
+                - almalinux9
+                - ubuntu2004
+                - ubuntu2204
+              arch:
+                - aarch64
