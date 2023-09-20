@@ -27,10 +27,26 @@ jobs:
               dockerhub_org=$github_org
               dockerhub_user=$github_org
             fi
+            echo "DockerHub organization: $dockerhub_org"
+            echo "DockerHub user: $dockerhub_user"
             bin/build_docker_images.sh \
               -i "<< parameters.image_name >>" \
               --tag_prefix "$dockerhub_org" \
               --tag_output_file docker_tag.txt
+
+            if [[ -z ${CIRCLE_PR_NUMBER:-} ]]; then
+              echo "This is not a PR, doing a DockerHub push."
+              echo "Logging into DockerHub as user '$dockerhub_user'"
+              echo "${DOCKERHUB_TOKEN}" | \
+                docker login -u "$dockerhub_user" --password-stdin
+
+              docker_tag=$(<docker_tag.txt)
+              echo "Docker tag: $docker_tag"
+              ( set -x; docker push "$docker_tag" )
+            else
+              echo "This is a PR, not doing a DockerHub push."
+            fi
+            
   
 workflows:
   build-workflow:
