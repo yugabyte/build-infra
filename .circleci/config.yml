@@ -13,11 +13,9 @@
 version: 2.1
 
 jobs:
-  build:
+  aarch64:
     parameters:
       image_name:
-        type: string
-      arch:
         type: string
 
     machine:
@@ -43,7 +41,7 @@ jobs:
 workflows:
   build-workflow:
     jobs:
-      - build:
+      - aarch64:
           matrix:
             parameters:
               image_name:
@@ -52,5 +50,3 @@ workflows:
                 - almalinux9
                 - ubuntu2004
                 - ubuntu2204
-              arch:
-                - aarch64
