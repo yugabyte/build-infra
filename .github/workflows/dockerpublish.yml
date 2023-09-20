@@ -38,7 +38,7 @@ jobs:
       (github.event_name == 'push' &&
        !contains(github.event.head_commit.message, 'skip ci') &&
        !contains(github.event.head_commit.message, 'ci skip') &&
-       !contains(github.event.head_commit.message, 'skip gh actions' &&
+       !contains(github.event.head_commit.message, 'skip gh actions') &&
        !contains(github.event.head_commit.message, 'skip github actions')) ||
       github.event_name == 'pull_request'
 
