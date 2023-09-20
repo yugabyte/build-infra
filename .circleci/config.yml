@@ -69,5 +69,6 @@ workflows:
                 - almalinux9
                 - ubuntu2004
                 - ubuntu2204
+                - ubuntu2304
               arch:
                 - aarch64
