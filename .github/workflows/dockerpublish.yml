@@ -19,7 +19,7 @@ env:
   GITHUB_ORG_AND_REPO: "${{ github.repository }}"
 
 jobs:
-  build:
+  x86_64:
 
     strategy:
       fail-fast: false
