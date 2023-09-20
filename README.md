@@ -14,6 +14,7 @@ the following Docker images for x86_64.
 - Ubuntu 18.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu1804_x86_64/tags
 - Ubuntu 20.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2004_x86_64/tags
 - Ubuntu 22.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2204_x86_64/tags
+- Ubuntu 23.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2304_x86_64/tags
 
 ## aarch64 images
 
