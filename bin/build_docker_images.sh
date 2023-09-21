@@ -95,7 +95,7 @@ dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
 timestamp=$( get_timestamp_for_filenames )
 
-if [[ -z $tag_prefix && -n $github_org ]]; then
+if [[ -n $github_org ]]; then
   if [[ $github_org == "yugabyte" ]]; then
     dockerhub_org="yugabyteci"
     dockerhub_user="yugabyteci"
@@ -107,12 +107,21 @@ if [[ -z $tag_prefix && -n $github_org ]]; then
   log "Using DockerHub user name: $dockerhub_user"
 fi
 
-if [[ $is_pr == "true" && $should_push == "true" ]]; then
-  log "This is a pull request (--is_pr specified as true), will not push to DockerHub."
+if [[ $should_push == "true" && $is_pr == "false" && -z ${DOCKERHUB_TOKEN:-} ]]; then
+  fatal "DOCKERHU&B_TOKEN is not set, and we are being asked to push the image after building it."
+fi
+
+if [[ -z $tag_prefix ]]; then
+  tag_prefix=$dockerhub_org
+  log "Using DockerHub organization name as tag prefix: $tag_prefix"
 fi
 
 if [[ -n $tag_prefix ]]; then
   tag_prefix=$tag_prefix/
+fi
+
+if [[ $is_pr == "true" && $should_push == "true" ]]; then
+  log "This is a pull request (--is_pr specified as true), will not push to DockerHub."
 fi
 
 arch=$( uname -m )
