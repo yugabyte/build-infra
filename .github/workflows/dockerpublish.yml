@@ -17,6 +17,7 @@ on:
 
 env:
   GITHUB_ORG_AND_REPO: "${{ github.repository }}"
+  DOCKERHUB_TOKEN: "${{ secrets.DOCKERHUB_TOKEN }}"
 
 jobs:
   x86_64:
