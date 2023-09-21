@@ -108,7 +108,7 @@ if [[ -n $github_org ]]; then
 fi
 
 if [[ $should_push == "true" && $is_pr == "false" && -z ${DOCKERHUB_TOKEN:-} ]]; then
-  fatal "DOCKERHU&B_TOKEN is not set, and we are being asked to push the image after building it."
+  fatal "DOCKERHUB_TOKEN is not set, and we are being asked to push the image after building it."
 fi
 
 if [[ -z $tag_prefix ]]; then
