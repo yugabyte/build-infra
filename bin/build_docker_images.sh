@@ -29,6 +29,11 @@ Options:
     The file to write the resulting Docker image tag to
   -p, --push
     Push the built image(s) to DockerHub (must be logged in).
+  --is_pr <true|false>
+    Specify whether this is a pull request.
+  --github_org
+    When running on CI/CD, the GitHub organization of the repository being tested, or the user
+    submitting the pull request.
 EOT
 }
 
@@ -42,6 +47,8 @@ image_name=""
 should_push=false
 tag_prefix=""
 tag_output_file=""
+github_org=""
+is_pr=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -64,6 +71,18 @@ while [[ $# -gt 0 ]]; do
       tag_output_file=$2
       shift
     ;;
+    --github_org)
+      github_org=$2
+      shift
+    ;;
+    --is_pr)
+      is_pr=$2
+      if [[ ! $is_pr =~ ^(true|false) ]]; then
+        echo "Invalid value of --is_pr: $is_pr (expected true/false)" >&2
+        exit 1
+      fi
+      shift
+    ;;
     *)
       print_usage >&2
       echo >&2
@@ -75,6 +94,23 @@ done
 dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
 timestamp=$( get_timestamp_for_filenames )
+
+if [[ -z $tag_prefix && -n $github_org ]]; then
+  if [[ $github_org == "yugabyte" ]]; then
+    dockerhub_org="yugabyteci"
+    dockerhub_user="yugabyteci"
+  else
+    dockerhub_org=$github_org
+    dockerhub_user=$github_org
+  fi
+  log "Using DockerHub organization: $dockerhub_org"
+  log "Using DockerHub user name: $dockerhub_user"
+fi
+
+if [[ $is_pr == "true" && $should_push == "true" ]]; then
+  log "This is a pull request (--is_pr specified as true), will not push to DockerHub."
+fi
+
 if [[ -n $tag_prefix ]]; then
   tag_prefix=$tag_prefix/
 fi
@@ -93,7 +129,18 @@ fi
   docker build -f "$dockerfile_path" -t "$tag" .
 )
 
-if "$should_push"; then
-  log "Pushing $tag to DockerHub (--push specified)."
-  ( set -x; docker push "$tag" )
+if [[ $should_push == "true" ]]; then
+  if [[ $is_pr == "true" ]]; then
+    log "This is a pull request, not pushing to DockerHub"
+  else
+    if [[ -n ${DOCKER_HUB_TOKEN:-} ]]; then
+      log "Logging into DockerHub as user '$dockerhub_user'"
+      echo "${DOCKERHUB_TOKEN}" | \
+        docker login -u "$dockerhub_user" --password-stdin
+    else
+      log "DOCKERHUB_TOKEN is not set, not attempting to log into DockerHub"
+    fi
+
+    ( set -x; docker push "$tag" )
+  fi
 fi
