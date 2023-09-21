@@ -133,7 +133,7 @@ if [[ $should_push == "true" ]]; then
   if [[ $is_pr == "true" ]]; then
     log "This is a pull request, not pushing to DockerHub"
   else
-    if [[ -n ${DOCKER_HUB_TOKEN:-} ]]; then
+    if [[ -n ${DOCKERHUB_TOKEN:-} ]]; then
       log "Logging into DockerHub as user '$dockerhub_user'"
       echo "${DOCKERHUB_TOKEN}" | \
         docker login -u "$dockerhub_user" --password-stdin
