@@ -54,7 +54,7 @@ readonly REDHAT_COMMON_PACKAGES=(
   openssl-devel
   patch
   patchelf
-  perl-Digest
+  perl-core
   php
   php-common
   php-curl
