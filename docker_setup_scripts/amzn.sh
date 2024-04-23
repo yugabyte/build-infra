@@ -54,6 +54,11 @@ readonly AMZN2_ONLY_PACKAGES=(
   python38-devel
   libselinux-python
   libsemanage-python
+  gcc10
+  gcc10-binutils
+  gcc10-binutils-devel
+  gcc10-c++
+  libasan10-devel
 )
 
 # -------------------------------------------------------------------------------------------------
