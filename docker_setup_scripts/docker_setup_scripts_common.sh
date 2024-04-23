@@ -194,6 +194,8 @@ yb_create_yugabyteci_user() {
       useradd "$user_name" --create-home
     elif [[ -f /etc/redhat-release ]]; then
       adduser "$user_name"
+    elif grep -q 'ID="amzn' /etc/os-release; then
+      adduser "$user_name"
     else
       adduser --disabled-password --gecos "" "$user_name"
     fi
