@@ -26,6 +26,7 @@ The following aarch64 Docker images get built by CircleCI automation:
 - CentOS 7: https://hub.docker.com/r/yugabyteci/yb_build_infra_centos7_aarch64/tags
 - AlmaLinux 8: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux8_aarch64/tags
 - AlmaLinux 9: https://hub.docker.com/r/yugabyteci/yb_build_infra_almalinux9_aarch64/tags
+- Amazon Linux 2: https://hub.docker.com/r/yugabyteci/yb_build_infra_amazonlinux2_aarch64/tags
 - Ubuntu 20.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2004_aarch64/tags
 - Ubuntu 22.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2204_aarch64/tags
 

@@ -48,5 +48,6 @@ workflows:
                 - centos7
                 - almalinux8
                 - almalinux9
+                - amazonlinux2
                 - ubuntu2004
                 - ubuntu2204
