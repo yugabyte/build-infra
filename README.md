@@ -4,7 +4,7 @@
 
 This repository contains code to build Docker images that can be used to build
 YugabyteDB. On every commit to this repository we automatically build and push
-the following Docker images for x86_64.
+the following Docker images for each supported architecture.
 
 ## x86_64 images
 
