@@ -29,7 +29,6 @@ jobs:
           - almalinux8
           - almalinux9
           - amazonlinux2
-          - ubuntu1804
           - ubuntu2004
           - ubuntu2204
           - ubuntu2304
