@@ -95,6 +95,8 @@ dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
 timestamp=$( get_timestamp_for_filenames )
 
+dockerhub_org=""
+dockerhub_user=""
 if [[ -n $github_org ]]; then
   if [[ $github_org == "yugabyte" ]]; then
     dockerhub_org="yugabyteci"
@@ -111,7 +113,7 @@ if [[ $should_push == "true" && $is_pr == "false" && -z ${DOCKERHUB_TOKEN:-} ]];
   fatal "DOCKERHUB_TOKEN is not set, and we are being asked to push the image after building it."
 fi
 
-if [[ -z $tag_prefix ]]; then
+if [[ -z $tag_prefix && -n $dockerhub_org ]]; then
   tag_prefix=$dockerhub_org
   log "Using DockerHub organization name as tag prefix: $tag_prefix"
 fi
