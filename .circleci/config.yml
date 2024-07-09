@@ -45,9 +45,9 @@ workflows:
           matrix:
             parameters:
               image_name:
-                - centos7
                 - almalinux8
                 - almalinux9
                 - amazonlinux2
                 - ubuntu2004
                 - ubuntu2204
+                - ubuntu2404

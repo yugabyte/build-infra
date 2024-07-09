@@ -26,14 +26,13 @@ jobs:
       fail-fast: false
       matrix:
         image_name:
-          - centos7
           - almalinux8
           - almalinux9
           - amazonlinux2
-          - ubuntu1804
           - ubuntu2004
           - ubuntu2204
           - ubuntu2304
+          - ubuntu2404
 
     runs-on: ubuntu-latest
     if: >
