@@ -62,7 +62,7 @@ jobs:
           - image_name: ubuntu2404
             architecture: aarch64
 
-    runs-on: ${{ matrix.architecture == 'aarch64' && 'ubuntu-22.04-arm64' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.architecture == 'aarch64' && 'ubuntu-24.04-aarch64-2core-8gb' || 'ubuntu-latest' }}
 
     if: >
       (github.event_name == 'push' &&
