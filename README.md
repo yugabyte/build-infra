@@ -15,7 +15,6 @@ The following x86_64 Docker images get built by GitHub Actions automation:
 - Amazon Linux 2: https://hub.docker.com/r/yugabyteci/yb_build_infra_amazonlinux2_x86_64/tags
 - Ubuntu 20.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2004_x86_64/tags
 - Ubuntu 22.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2204_x86_64/tags
-- Ubuntu 23.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2304_x86_64/tags
 - Ubuntu 24.04: https://hub.docker.com/r/yugabyteci/yb_build_infra_ubuntu2404_x86_64/tags
 
 ## aarch64 images
