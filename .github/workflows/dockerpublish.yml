@@ -25,16 +25,45 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name:
-          - almalinux8
-          - almalinux9
-          - amazonlinux2
-          - ubuntu2004
-          - ubuntu2204
-          - ubuntu2304
-          - ubuntu2404
+        include:
+          - image_name: amazonlinux2
+            architecture: x86_64
 
-    runs-on: ubuntu-latest
+          - image_name: almalinux8
+            architecture: x86_64
+
+          - image_name: almalinux9
+            architecture: x86_64
+
+          - image_name: ubuntu2004
+            architecture: x86_64
+
+          - image_name: ubuntu2204
+            architecture: x86_64
+
+          - image_name: ubuntu2404
+            architecture: x86_64
+
+          - image_name: amazonlinux2
+            architecture: aarch64
+
+          - image_name: almalinux8
+            architecture: aarch64
+
+          - image_name: almalinux9
+            architecture: aarch64
+
+          - image_name: ubuntu2004
+            architecture: aarch64
+
+          - image_name: ubuntu2204
+            architecture: aarch64
+
+          - image_name: ubuntu2404
+            architecture: aarch64
+
+    runs-on: ${{ matrix.architecture == 'aarch64' && 'ubuntu-22.04-arm64' || 'ubuntu-latest' }}
+
     if: >
       (github.event_name == 'push' &&
        !contains(github.event.head_commit.message, 'skip ci') &&
