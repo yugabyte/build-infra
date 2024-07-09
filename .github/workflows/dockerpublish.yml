@@ -20,7 +20,7 @@ env:
   DOCKERHUB_TOKEN: "${{ secrets.DOCKERHUB_TOKEN }}"
 
 jobs:
-  x86_64:
+  build_image:
 
     strategy:
       fail-fast: false
