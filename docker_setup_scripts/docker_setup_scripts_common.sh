@@ -239,6 +239,12 @@ yb_install_spark() {
   yb_end_group
 }
 
+yb_install_rust() {
+  yb_start_group "Installing Rust"
+  bash "$yb_build_infra_scripts_dir/install_rust.sh"
+  yb_end_group
+}
+
 yb_yum_cleanup() {
   yb_start_group "Yum cleanup"
   ( set -x; yum clean all )
@@ -361,6 +367,7 @@ yb_perform_universal_steps() {
   yb_install_maven
   yb_create_opt_yb_build_hierarchy
   yb_install_spark
+  yb_install_rust
   yb_install_go_packages
   yb_install_bazel
 }
