@@ -9,13 +9,13 @@ install_dependencies() {
     . /etc/os-release
     case "$ID" in
       amzn|rhel|centos|almalinux|fedora)
-        yum install -y curl gcc && yum clean all
+        yum install -y gcc && yum clean all
         ;;
       ubuntu|debian)
-        apt-get update && apt-get install -y --no-install-recommends curl build-essential && rm -rf /var/lib/apt/lists/*
+        apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/*
         ;;
       opensuse*)
-        zypper install -y curl gcc && zypper clean -a
+        zypper install -y gcc && zypper clean -a
         ;;
       *)
         echo "Unsupported distribution: $ID"
@@ -30,6 +30,6 @@ install_dependencies() {
 
 install_dependencies
 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain "$RUST_VERSION"
+--proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain "$RUST_VERSION"
 
 source $HOME/.cargo/env
