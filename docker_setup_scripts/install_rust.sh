@@ -30,6 +30,6 @@ install_dependencies() {
 
 install_dependencies
 
---proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain "$RUST_VERSION"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain "$RUST_VERSION"
 
 source $HOME/.cargo/env
