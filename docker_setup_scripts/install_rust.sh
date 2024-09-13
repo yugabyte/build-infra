@@ -8,7 +8,7 @@ install_dependencies() {
   if [ -f /etc/os-release ]; then
     . /etc/os-release
     case "$ID" in
-      amzn|rhel|centos|fedora)
+      amzn|rhel|centos|almalinux|fedora)
         yum install -y curl gcc && yum clean all
         ;;
       ubuntu|debian)
