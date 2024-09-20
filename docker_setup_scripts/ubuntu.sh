@@ -60,9 +60,12 @@ set_ubuntu_packages() {
     gcc_versions+=( 13 )
   fi
   for gcc_version in "${gcc_versions[@]}"; do
-    # apt is sometimes overly smart on interpreting the argument as a regex and matching Clang
-    # for GCC, so let's quote the pluses.
-    packages+=( "g[+][+]-${gcc_version}" )
+    # Apparently apt interprets the argument as a regex, which could result in matching Clang
+    # for GCC (or there might be some internal logic for that). Let's quote the pluses for safety.
+    packages+=(
+      "gcc-${gcc_version}"
+      "g[+][+]-${gcc_version}"
+    )
   done
 }
 
