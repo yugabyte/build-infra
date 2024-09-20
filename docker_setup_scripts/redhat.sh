@@ -16,7 +16,7 @@ readonly TOOLSET_PACKAGE_SUFFIXES_COMMON=(
   libubsan-devel
 )
 
-readonly TOOLSET_PACKAGE_SUFFIXES_RHEL8=(
+readonly TOOLSET_PACKAGE_SUFFIXES_RHEL8_GCC11=(
   toolchain
 )
 
@@ -137,7 +137,6 @@ install_packages() {
     8)
       gcc_toolsets_to_install=( "${RHEL8_GCC_TOOLSETS_TO_INSTALL[@]}" )
       toolset_package_suffixes+=(
-        "${TOOLSET_PACKAGE_SUFFIXES_RHEL8[@]}"
         "${TOOLSET_PACKAGE_SUFFIXES_RHEL8_9[@]}"
       )
       packages+=( "${RHEL8_ONLY_PACKAGES[@]}" )
@@ -158,7 +157,13 @@ install_packages() {
   for gcc_toolset_version in "${gcc_toolsets_to_install[@]}"; do
     local versioned_prefix="${toolset_prefix}-${gcc_toolset_version}"
     packages+=( "${versioned_prefix}" )
-    for package_suffix in "${toolset_package_suffixes[@]}"; do
+    current_toolset_package_suffixes=( "${toolset_package_suffixes[@]}" )
+    if [[ $gcc_toolset_version -eq 11 && $os_major_version -eq 8 ]]; then
+      current_toolset_package_suffixes+=(
+        "${TOOLSET_PACKAGE_SUFFIXES_RHEL8_GCC11[@]}"
+      )
+    fi
+    for package_suffix in "${current_toolset_package_suffixes[@]}"; do
       packages+=( "${versioned_prefix}-${package_suffix}" )
     done
   done
