@@ -15,9 +15,6 @@ install_dependencies() {
       ubuntu|debian)
         apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/*
         ;;
-      opensuse*)
-        zypper install -y gcc && zypper clean -a
-        ;;
       *)
         echo "Unsupported distribution: $ID"
         exit 1
