@@ -25,10 +25,8 @@ readonly TOOLSET_PACKAGE_SUFFIXES_RHEL8_9=(
   gcc-c++
 )
 
-readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64=( 11 )
-readonly CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64=( 10 )
-readonly RHEL8_GCC_TOOLSETS_TO_INSTALL=( 11 )
-readonly RHEL9_GCC_TOOLSETS_TO_INSTALL=( 12 )
+readonly RHEL8_GCC_TOOLSETS_TO_INSTALL=( 11 12 13 )
+readonly RHEL9_GCC_TOOLSETS_TO_INSTALL=( 12 13 )
 
 # Packages installed on all supported versions of CentOS.
 readonly REDHAT_COMMON_PACKAGES=(
@@ -69,15 +67,6 @@ readonly REDHAT_COMMON_PACKAGES=(
   xz
 )
 
-readonly CENTOS7_ONLY_PACKAGES=(
-  python-devel
-  libselinux-python
-  libsemanage-python
-  rh-python38-devel
-  rh-python38-python-devel
-  rh-python38-python-pip
-)
-
 readonly RHEL8_ONLY_PACKAGES=(
   libselinux
   libselinux-devel
@@ -88,9 +77,7 @@ readonly RHEL8_ONLY_PACKAGES=(
 
   glibc-locale-source
   glibc-langpack-en
-)
 
-readonly RHEL7_8_ONLY_PACKAGES=(
   gdbm-devel
   curl
 )
@@ -131,7 +118,7 @@ detect_os_version() {
     grep -E ^VERSION= /etc/os-release | sed 's/VERSION=//; s/"//g' | awk '{print $1}'
   )
   os_major_version=${os_major_version%%.*}
-  if [[ ! $os_major_version =~ ^[789]$ ]]; then
+  if [[ ! $os_major_version =~ ^[89]$ ]]; then
     yb_fatal_unsupported_rhel_major_version
   fi
   readonly os_major_version
@@ -140,29 +127,13 @@ detect_os_version() {
 install_packages() {
   local packages=( "${REDHAT_COMMON_PACKAGES[@]}" )
 
-  # The settings below are used on RHEL 8 and later. We override them for CentOS 7.
+  # The settings below are used on RHEL 8 and later.
   local toolset_prefix="gcc-toolset"
   local package_manager=dnf
 
   local gcc_toolsets_to_install=()
   local toolset_package_suffixes=( "${TOOLSET_PACKAGE_SUFFIXES_COMMON[@]}" )
   case "${os_major_version}" in
-    7)
-      toolset_prefix="devtoolset"
-      case "$( uname -m )" in
-        x86_64)
-          gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_X86_64[@]}" )
-        ;;
-        aarch64)
-          gcc_toolsets_to_install=( "${CENTOS7_GCC_TOOLSETS_TO_INSTALL_AARCH64[@]}" )
-        ;;
-        *)
-          yb_fatal_unknown_architecture
-      esac
-      package_manager=yum
-      packages+=( "${CENTOS7_ONLY_PACKAGES[@]}" )
-      packages+=( "${RHEL7_8_ONLY_PACKAGES[@]}" )
-    ;;
     8)
       gcc_toolsets_to_install=( "${RHEL8_GCC_TOOLSETS_TO_INSTALL[@]}" )
       toolset_package_suffixes+=(
@@ -170,7 +141,6 @@ install_packages() {
         "${TOOLSET_PACKAGE_SUFFIXES_RHEL8_9[@]}"
       )
       packages+=( "${RHEL8_ONLY_PACKAGES[@]}" )
-      packages+=( "${RHEL7_8_ONLY_PACKAGES[@]}" )
     ;;
     9)
       gcc_toolsets_to_install=( "${RHEL9_GCC_TOOLSETS_TO_INSTALL[@]}" )
@@ -205,11 +175,6 @@ install_packages() {
   "$package_manager" groupinstall -y 'Development Tools'
   yb_end_group
 
-  if [[ $os_major_version -eq 7 ]]; then
-    # We have to install centos-release-scl before installing devtoolsets.
-    "$package_manager" install -y centos-release-scl
-  fi
-
   yb_start_group "Installing CentOS $os_major_version packages"
   (
     set -x
@@ -227,18 +192,6 @@ install_packages() {
   yb_end_group
 }
 
-yb_configure_python38_on_centos7() {
-  local python38_root=/opt/rh/rh-python38/root
-  update-alternatives --install /usr/local/bin/python3 python3 "$python38_root/bin/python3" 1000
-  (
-    set +eu
-    . "$python38_root/../enable"
-    set -eu
-    pip3 install --upgrade pip
-    update-alternatives --install /usr/local/bin/pip3 pip3 "$( which pip )" 1000
-  )
-}
-
 # -------------------------------------------------------------------------------------------------
 # Main script
 # -------------------------------------------------------------------------------------------------
@@ -253,10 +206,6 @@ yb_perform_universal_steps
 
 yb_install_cmake
 yb_install_ninja
-
-if [[ $os_major_version -eq 7 ]]; then
-  yb_configure_python38_on_centos7
-fi
 
 if [[ $os_major_version -lt 9 ]]; then
   yb_redhat_init_locale
