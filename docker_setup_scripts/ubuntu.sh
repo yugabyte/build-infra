@@ -9,65 +9,64 @@ set -euo pipefail
 . /etc/lsb-release
 ubuntu_major_version=${DISTRIB_RELEASE%%.*}
 
-packages=(
-  apt-file
-  apt-utils
-  automake
-  bison
-  cmake
-  curl
-  flex
-  git
-  groff-base
-  less
-  libasan5
-  libbz2-dev
-  libicu-dev
-  libncurses5-dev
-  libreadline-dev
-  libssl-dev
-  libtool
-  libtsan0
-  locales
-  maven
-  ninja-build
-  openjdk-8-jdk-headless
-  patchelf
-  pkg-config
-  python3-dev
-  python3-pip
-  python3-venv
-  python3-wheel
-  rsync
-  sudo
-  tzdata
-  unzip
-  uuid-dev
-  vim
-  wget
-  xz-utils
-)
-
-if [[ $ubuntu_major_version -eq 20 ]]; then
-  packages+=( g++-10 )
-fi
-
-if [[ $ubuntu_major_version -eq 22 ]]; then
-  packages+=( g++-11 )
-fi
-
-if [[ $ubuntu_major_version -eq 23 ]]; then
-  packages+=( g++-13 )
-fi
-
-if [[ $ubuntu_major_version -le 18 ]]; then
-  packages+=(
-    python-pip
-    python-dev
-    g++-8
+set_ubuntu_packages() {
+  ubuntu_packages=(
+    apt-file
+    apt-utils
+    automake
+    bison
+    cmake
+    curl
+    flex
+    git
+    groff-base
+    less
+    libasan5
+    libbz2-dev
+    libicu-dev
+    libncurses5-dev
+    libreadline-dev
+    libssl-dev
+    libtool
+    libtsan0
+    locales
+    maven
+    ninja-build
+    openjdk-8-jdk-headless
+    patchelf
+    pkg-config
+    python3-dev
+    python3-pip
+    python3-venv
+    python3-wheel
+    rsync
+    sudo
+    tzdata
+    unzip
+    uuid-dev
+    vim
+    wget
+    xz-utils
   )
-fi
+  local gcc_versions=()
+  if [[ $ubuntu_major_version -eq 20 ]]; then
+    gcc_versions+=( 10 )
+  fi
 
-yb_debian_configure_and_install_packages "${packages[@]}"
+  if [[ $ubuntu_major_version -ge 22 ]]; then
+    gcc_versions+=( 11 12  )
+  fi
+  if [[ $ubuntu_major_version -ge 24 ]]; then
+    gcc_versions+=( 13 )
+  fi
+  for gcc_version in "${gcc_versions[@]}"; do
+    # apt is sometimes overly smart on interpreting the argument as a regex and matching Clang
+    # for GCC, so let's quote the pluses.
+    packages+=( "g[+][+]-${gcc_version}" )
+  done
+}
+
+set_ubuntu_packages
+yb_debian_configure_and_install_packages "${ubuntu_packages[@]}"
 yb_perform_universal_steps
 yb_remove_build_infra_scripts
