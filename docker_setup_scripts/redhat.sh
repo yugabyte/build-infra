@@ -42,12 +42,17 @@ readonly REDHAT_COMMON_PACKAGES=(
   glibc-all-langpacks
   java-1.8.0-openjdk
   java-1.8.0-openjdk-devel
+  java-11-openjdk
+  java-11-openjdk-devel
+  java-17-openjdk
+  java-17-openjdk-devel
   langpacks-en
   less
   libatomic
   libffi-devel
   libsqlite3x-devel
   libtool
+  npm
   openssl-devel
   openssl-devel
   patch
@@ -180,7 +185,7 @@ install_packages() {
   "$package_manager" groupinstall -y 'Development Tools'
   yb_end_group
 
-  yb_start_group "Installing CentOS $os_major_version packages"
+  yb_start_group "Installing AlmaLinux $os_major_version packages"
   (
     set -x
     "${package_manager}" install -y "${packages[@]}"
