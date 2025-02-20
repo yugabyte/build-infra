@@ -72,12 +72,7 @@ jobs:
       - name: Build and push the image
         run: |
           github_org=${GITHUB_ORG_AND_REPO%%/*}
-          is_pr=true
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            is_pr=false
-          fi
           bin/build_docker_images.sh \
             --image_name ${{ matrix.image_name }} \
             --github_org "$github_org" \
-            --is_pr "$is_pr" \
-            --push
+            --${{ github.event_name }}
