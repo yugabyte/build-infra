@@ -35,9 +35,6 @@ jobs:
           - image_name: almalinux9
             architecture: x86_64
 
-          - image_name: ubuntu2004
-            architecture: x86_64
-
           - image_name: ubuntu2204
             architecture: x86_64
 
@@ -51,9 +48,6 @@ jobs:
             architecture: aarch64
 
           - image_name: almalinux9
-            architecture: aarch64
-
-          - image_name: ubuntu2004
             architecture: aarch64
 
           - image_name: ubuntu2204
