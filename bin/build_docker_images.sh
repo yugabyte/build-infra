@@ -29,8 +29,8 @@ Options:
     The file to write the resulting Docker image tag to
   -p, --push
     Push the built image(s) to DockerHub (must be logged in).
-  --is_pr <true|false>
-    Specify whether this is a pull request.
+  --pull_request
+    Specify whether this is a pull request.  Pull requests never push their image.
   --github_org
     When running on CI/CD, the GitHub organization of the repository being tested, or the user
     submitting the pull request.
@@ -75,13 +75,8 @@ while [[ $# -gt 0 ]]; do
       github_org=$2
       shift
     ;;
-    --is_pr)
-      is_pr=$2
-      if [[ ! $is_pr =~ ^(true|false) ]]; then
-        echo "Invalid value of --is_pr: $is_pr (expected true/false)" >&2
-        exit 1
-      fi
-      shift
+    --pull_request)
+      is_pr=true
     ;;
     *)
       print_usage >&2
@@ -90,6 +85,10 @@ while [[ $# -gt 0 ]]; do
   esac
   shift
 done
+
+if [[ $should_push == "true" && $is_pr == "true" ]]; then
+  fatal "Only one of --push or --pull_request is allowed"
+fi
 
 dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
@@ -109,7 +108,7 @@ if [[ -n $github_org ]]; then
   log "Using DockerHub user name: $dockerhub_user"
 fi
 
-if [[ $should_push == "true" && $is_pr == "false" && -z ${DOCKERHUB_TOKEN:-} ]]; then
+if [[ $should_push == "true" && -z ${DOCKERHUB_TOKEN:-} ]]; then
   fatal "DOCKERHUB_TOKEN is not set, and we are being asked to push the image after building it."
 fi
 
@@ -122,12 +121,13 @@ if [[ -n $tag_prefix ]]; then
   tag_prefix=$tag_prefix/
 fi
 
-if [[ $is_pr == "true" && $should_push == "true" ]]; then
-  log "This is a pull request (--is_pr specified as true), will not push to DockerHub."
+if [[ $should_push == "true" ]]; then
+  log "This is a pull request (--pull_request parameter used), will not push to DockerHub."
 fi
 
 arch=$( uname -m )
-tag=${tag_prefix}yb_build_infra_${image_name}_${arch}:v${timestamp}
+tagbase=${tag_prefix}yb_build_infra_${image_name}_${arch}
+tag=${tagbase}:v${timestamp}
 if [[ -n $tag_output_file ]]; then
   echo "$tag" >"$tag_output_file"
 fi
@@ -137,21 +137,15 @@ fi
   # We need to change to this directory to be able to reference scripts from docker_setup_scripts.
   cd "$yb_build_infra_root"
 
-  docker build -f "$dockerfile_path" -t "$tag" .
+  docker build -f "$dockerfile_path" -t "$tag" -t "$tagbase:latest" .
 )
 
 if [[ $should_push == "true" ]]; then
-  if [[ $is_pr == "true" ]]; then
-    log "This is a pull request, not pushing to DockerHub"
+  if [[ -n ${DOCKERHUB_TOKEN:-} ]]; then
+    log "Logging into DockerHub as user '$dockerhub_user'"
+    echo "${DOCKERHUB_TOKEN}" | docker login -u "$dockerhub_user" --password-stdin
   else
-    if [[ -n ${DOCKERHUB_TOKEN:-} ]]; then
-      log "Logging into DockerHub as user '$dockerhub_user'"
-      echo "${DOCKERHUB_TOKEN}" | \
-        docker login -u "$dockerhub_user" --password-stdin
-    else
-      log "DOCKERHUB_TOKEN is not set, not attempting to log into DockerHub"
-    fi
-
-    ( set -x; docker push "$tag" )
+    log "DOCKERHUB_TOKEN is not set, not attempting to log into DockerHub"
   fi
+  ( set -x; docker push --all-tags "$tag" )
 fi

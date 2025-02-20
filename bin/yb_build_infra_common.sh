@@ -17,5 +17,5 @@ if [[ ! -d $yb_build_infra_root/yugabyte-bash-common ||
   ( cd "$yb_build_infra_root"; git submodule update --init --recursive )
 fi
 
-# shellcheck source=yugabyte-bash-common/src/yugabyte-bash-common.sh
-. "$yb_build_infra_root"/yugabyte-bash-common/src/yugabyte-bash-common.sh
+# shellcheck source=yugabyte-bash-common/src/logger.sh
+. "$yb_build_infra_root"/yugabyte-bash-common/src/logger.sh
