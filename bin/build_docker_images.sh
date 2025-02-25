@@ -147,5 +147,5 @@ if [[ $should_push == "true" ]]; then
   else
     log "DOCKERHUB_TOKEN is not set, not attempting to log into DockerHub"
   fi
-  ( set -x; docker push --all-tags "$tag" )
+  ( set -x; docker push --all-tags "$tagbase" )
 fi
