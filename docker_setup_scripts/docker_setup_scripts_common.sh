@@ -176,7 +176,6 @@ yb_determine_ubuntu_packages() {
     apt-utils
     automake
     bison
-    cmake
     curl
     flex
     git
@@ -431,6 +430,7 @@ yb_perform_universal_steps() {
   yb_install_rust
   yb_install_go_packages
   yb_install_bazel
+  yb_install_cmake
 }
 
 run_cmd_hide_output_if_ok() {
