@@ -102,6 +102,10 @@ yb_apt_get_dist_upgrade() {
   yb_start_group "apt-get update and dist-upgrade"
   apt-get update
   apt-get dist-upgrade -y
+  if [[ $ubuntu_major_version -ne 22 ]]; then
+    apt-get install software-properties-common -y
+    add-apt-repository ppa:deadsnakes/ppa -y
+  fi
   yb_end_group
 }
 
@@ -199,6 +203,8 @@ yb_determine_ubuntu_packages() {
     python3-pip
     python3-venv
     python3-wheel
+    python3.11
+    python3.11-venv
     rsync
     sudo
     tzdata
