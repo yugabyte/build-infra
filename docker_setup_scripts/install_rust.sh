@@ -2,7 +2,7 @@
 
 set -euo pipefail -x
 
-readonly RUST_VERSION=1.78.0
+readonly RUST_VERSION=1.89.0 # This is the latest at the time of edit
 
 install_dependencies() {
   if [ -f /etc/os-release ]; then
