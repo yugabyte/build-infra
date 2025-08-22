@@ -2,13 +2,15 @@
 
 set -euo pipefail -x
 
-readonly MAVEN_VERSION=3.9.4
+readonly MAVEN_VERSION=3.9.11
 
 install_maven() {
   local version=$MAVEN_VERSION
   local maven_dir_name=apache-maven-$version
   local tarball_name=$maven_dir_name-bin.tar.gz
   local url="https://dlcdn.apache.org/maven/maven-3/$version/binaries/$tarball_name"
+  local shaurl="https://dlcdn.apache.org/maven/maven-3/$version/binaries/$tarball_name.sha512"
+  local sigurl="https://dlcdn.apache.org/maven/maven-3/$version/binaries/$tarball_name.asc"
   local maven_tmp_dir=/tmp/install_maven
   local dest_dir=/usr/share/$maven_dir_name
   local mvn_link_path=/usr/local/bin/mvn
@@ -22,11 +24,11 @@ install_maven() {
     cd "$maven_tmp_dir"
     rm -rf "${maven_tmp_dir:?}/"*
     curl -O "$url"
-    local actual_sha256sum
-    actual_sha256sum=$( sha256sum "$tarball_name" | awk '{print $1}' )
-    local expected_sha256sum=ff66b70c830a38d331d44f6c25a37b582471def9a161c93902bac7bea3098319
-    if [[ $actual_sha256sum != "$expected_sha256sum" ]]; then
-      echo "Invalid checksum: $actual_sha256sum, expected: $expected_sha256sum" >&2
+    local actual_sha512sum
+    actual_sha512sum=$( sha512sum "$tarball_name" | awk '{print $1}' )
+    local expected_sha512sum=$(curl "$shaurl")
+    if [[ $actual_sha512sum != "$expected_sha512sum" ]]; then
+      echo "Invalid checksum: $actual_sha512sum, expected: $expected_sha512sum" >&2
       exit 1
     fi
     tar xzf "$tarball_name"
