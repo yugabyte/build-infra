@@ -320,16 +320,16 @@ yb_yum_cleanup() {
 yb_install_golang() {
   yb_start_group "Installing Golang"
 
-  local go_version=1.19.2
+  local go_version=1.25.1
   local expected_sha256
   local arch_in_pkg_name
   case "$( uname -m )" in
     aarch64)
-      expected_sha256=b62a8d9654436c67c14a0c91e931d50440541f09eb991a987536cb982903126d
+      expected_sha256=65a3e34fb2126f55b34e1edfc709121660e1be2dee6bdf405fc399a63a95a87d
       arch_in_pkg_name=arm64
     ;;
     x86_64)
-      expected_sha256=5e8c5a74fe6470dd7e055a461acda8bb4050ead8c2df70f227e3ff7d8eb7eeb6
+      expected_sha256=7716a0d940a0f6ae8e1f3b3f4f36299dc53e31b16840dbd171254312c41ca12e
       arch_in_pkg_name=amd64
     ;;
     *)
