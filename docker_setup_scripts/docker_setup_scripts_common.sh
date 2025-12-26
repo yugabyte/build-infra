@@ -198,6 +198,10 @@ yb_determine_ubuntu_packages() {
     ninja-build
     openjdk-8-jdk-headless
     patchelf
+    php
+    php-common
+    php-curl
+    php-json
     pkg-config
     python3-dev
     python3-pip
@@ -308,6 +312,12 @@ yb_install_spark() {
 yb_install_rust() {
   yb_start_group "Installing Rust"
   bash "$yb_build_infra_scripts_dir/install_rust.sh"
+  yb_end_group
+}
+
+yb_install_arc() {
+  yb_start_group "Installing Arc"
+  bash "$yb_build_infra_scripts_dir/install_arc.sh"
   yb_end_group
 }
 
