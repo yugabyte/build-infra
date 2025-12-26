@@ -6,7 +6,7 @@ readonly MAVEN_VERSION=3.9.11
 
 install_maven() {
   local version=$MAVEN_VERSION
-  local maven_url='https://archive.apache.org/dist/maven/maven3'
+  local maven_url='https://archive.apache.org/dist/maven/maven-3'
   local maven_dir_name=apache-maven-$version
   local tarball_name=$maven_dir_name-bin.tar.gz
   local url="$maven_url/$version/binaries/$tarball_name"
