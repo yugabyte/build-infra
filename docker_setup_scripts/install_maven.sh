@@ -6,11 +6,12 @@ readonly MAVEN_VERSION=3.9.11
 
 install_maven() {
   local version=$MAVEN_VERSION
+  local maven_url='https://archive.apache.org/dist/maven/maven3'
   local maven_dir_name=apache-maven-$version
   local tarball_name=$maven_dir_name-bin.tar.gz
-  local url="https://dlcdn.apache.org/maven/maven-3/$version/binaries/$tarball_name"
-  local shaurl="https://dlcdn.apache.org/maven/maven-3/$version/binaries/$tarball_name.sha512"
-  local sigurl="https://dlcdn.apache.org/maven/maven-3/$version/binaries/$tarball_name.asc"
+  local url="$maven_url/$version/binaries/$tarball_name"
+  local shaurl="$maven_url/$version/binaries/$tarball_name.sha512"
+  local sigurl="$maven_url/$version/binaries/$tarball_name.asc"
   local maven_tmp_dir=/tmp/install_maven
   local dest_dir=/usr/share/$maven_dir_name
   local mvn_link_path=/usr/local/bin/mvn
