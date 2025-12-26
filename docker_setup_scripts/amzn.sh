@@ -39,7 +39,6 @@ readonly REDHAT_COMMON_PACKAGES=(
   php
   php-common
   php-curl
-  php-json
   readline-devel
   rsync
   ruby

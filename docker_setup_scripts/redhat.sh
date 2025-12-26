@@ -218,6 +218,8 @@ yb_yum_cleanup
 
 yb_perform_universal_steps
 
+yb_install_arc
+
 yb_install_ninja
 
 if [[ $os_major_version -lt 9 ]]; then

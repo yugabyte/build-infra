@@ -198,6 +198,10 @@ yb_determine_ubuntu_packages() {
     ninja-build
     openjdk-8-jdk-headless
     patchelf
+    php
+    php-common
+    php-curl
+    php-json
     pkg-config
     python3-dev
     python3-pip
@@ -440,7 +444,6 @@ yb_perform_universal_steps() {
   yb_create_opt_yb_build_hierarchy
   yb_install_spark
   yb_install_rust
-  yb_install_arc
   yb_install_go_packages
   yb_install_bazel
   yb_install_cmake
