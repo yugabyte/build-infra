@@ -27,6 +27,10 @@ packages=(
   maven
   npm
   patchelf
+  php
+  php-common
+  php-curl
+  php-json
   pkg-config
   python3-dev
   python3-pip

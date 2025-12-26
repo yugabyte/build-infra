@@ -61,6 +61,7 @@ readonly REDHAT_COMMON_PACKAGES=(
   php
   php-common
   php-curl
+  php-json
   python3.11
   python3.11-devel
   python3.11-pip
