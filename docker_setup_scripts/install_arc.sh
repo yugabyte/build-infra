@@ -3,7 +3,7 @@
 set -euo pipefail -x
 
 
-arc_version='origin/stable'
+arc_version='stable'
 
 git clone -b "$arc_version" https://github.com/phorgeit/arcanist.git arcanist
 git clone https://github.com/yugabyte/arcanist-support.git arcanist-support
