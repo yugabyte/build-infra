@@ -205,6 +205,7 @@ yb_determine_ubuntu_packages() {
     pkg-config
     python3-dev
     python3-pip
+    python3-pycodestyle
     python3-venv
     python3-wheel
     python3.11
