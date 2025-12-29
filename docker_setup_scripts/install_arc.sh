@@ -9,7 +9,7 @@ bld_user_dir='/home/yugabyteci'
 git clone -b "$arc_version" https://github.com/phorgeit/arcanist.git "${bld_user_dir}/arcanist"
 git clone https://github.com/yugabyte/arcanist-support.git "${bld_user_dir}/arcanist-support"
 
-arcanist/bin/arc set-config load '["arcanist-support/src"]'
+sudo -u yugabyteci arcanist/bin/arc set-config load '["arcanist-support/src"]'
 
 mkdir -p $bld_user_dir/.config
 cat << EOF > $bld_user_dir/.config/pycodestyle_config.ini
