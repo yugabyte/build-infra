@@ -6,6 +6,7 @@ arc_version='stable'
 
 git clone -b "$arc_version" https://github.com/phorgeit/arcanist.git arcanist
 git clone https://github.com/yugabyte/arcanist-support.git arcanist-support
+git clone https://github.com/yugabyte/yb-cpplint.git yb-cpplint
 
 ./arcanist/bin/arc set-config load '["arcanist-support/src"]'
 

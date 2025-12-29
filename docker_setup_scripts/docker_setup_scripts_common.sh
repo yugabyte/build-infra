@@ -203,9 +203,9 @@ yb_determine_ubuntu_packages() {
     php-curl
     php-json
     pkg-config
+    pycodestyle
     python3-dev
     python3-pip
-    python3-pycodestyle
     python3-venv
     python3-wheel
     python3.11
@@ -431,7 +431,7 @@ yb_install_bazel() {
   yb_end_group
 }
 
-readonly GO_PACKAGES=( github.com/bazelbuild/buildtools/buildozer@5.1.0 )
+readonly GO_PACKAGES=( github.com/bazelbuild/buildtools/buildozer@5.1.0 golang.org/x/lint/golint@latest)
 yb_install_go_packages() {
   GOPATH=$HOME/go
   local package
