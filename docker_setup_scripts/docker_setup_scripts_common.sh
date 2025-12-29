@@ -318,8 +318,8 @@ yb_install_rust() {
 
 yb_install_arc() {
   yb_start_group "Installing Arc"
-  # YBDB runs build as yugabyteci user
-  sudo -u yugabyteci bash "$yb_build_infra_scripts_dir/install_arc.sh"
+  # YBDB runs build as yugabyteci user, setup arc in home dir.
+  sudo -i -u yugabyteci bash "$yb_build_infra_scripts_dir/install_arc.sh"
 
   # Some places have path of dependent tool hard-coded
   if [[ ! -e "/usr/local/bin/pycodestyle" ]]; then
