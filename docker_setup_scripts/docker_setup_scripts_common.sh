@@ -205,6 +205,7 @@ yb_determine_ubuntu_packages() {
     pkg-config
     python3-dev
     python3-pip
+    python3-pycodestyle
     python3-venv
     python3-wheel
     python3.11
@@ -317,7 +318,13 @@ yb_install_rust() {
 
 yb_install_arc() {
   yb_start_group "Installing Arc"
-  bash "$yb_build_infra_scripts_dir/install_arc.sh"
+  # YBDB runs build as yugabyteci user, setup arc in home dir.
+  sudo -i -u yugabyteci bash "$yb_build_infra_scripts_dir/install_arc.sh"
+
+  # Some places have path of dependent tool hard-coded
+  if [[ ! -e "/usr/local/bin/pycodestyle" ]]; then
+    ln -s "/usr/bin/pycodestyle" "/usr/local/bin/pycodestyle"
+  fi
   yb_end_group
 }
 

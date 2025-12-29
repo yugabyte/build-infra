@@ -29,7 +29,9 @@ install_dependencies() {
 install_dependencies
 
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain "$RUST_VERSION"
-# This is a hack to get around inconsistent user at build time (yugabyte-db cs yugabyte-db-thirdparty)
+# This is a hack to get around inconsistent user at build time (yugabyte-db vs yugabyte-db-thirdparty)
+# - yugabyte-db-thirdparty uses root
+# - yugabyte-db uses yugabyteci
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sudo -u yugabyteci sh -s -- -y --default-toolchain "$RUST_VERSION"
 
 # shellcheck disable=SC1091
