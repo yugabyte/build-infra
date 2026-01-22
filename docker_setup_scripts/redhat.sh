@@ -58,7 +58,7 @@ readonly REDHAT_COMMON_PACKAGES=(
   patch
   patchelf
   perl-core
-  php
+  php-cli
   php-common
   php-curl
   php-json
@@ -194,6 +194,10 @@ install_packages() {
 
   yb_start_group "Installing development tools"
   "$package_manager" groupinstall -y 'Development Tools'
+  yb_end_group
+
+  yb_start_group "Set php module group to 8.2"
+  "$package_manager" module enable -y php:8.2
   yb_end_group
 
   yb_start_group "Installing AlmaLinux $os_major_version packages"
