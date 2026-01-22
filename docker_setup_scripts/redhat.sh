@@ -62,6 +62,7 @@ readonly REDHAT_COMMON_PACKAGES=(
   php-common
   php-curl
   php-json
+  postgresql-devel
   python3-pycodestyle
   python3.11
   python3.11-devel
@@ -70,6 +71,7 @@ readonly REDHAT_COMMON_PACKAGES=(
   rsync
   ruby
   ruby-devel
+  sbt
   sudo
   vim
   wget
@@ -162,6 +164,10 @@ install_packages() {
     *)
       yb_fatal_unsupported_rhel_major_version
   esac
+
+  yb_start_group "Add sbt repo"
+  curl -L https://www.scala-sbt.org/sbt-rpm.repo > /etc/yum.repos.d/sbt-rpm.repo
+  yb_end_group
 
   local gcc_toolset_version
   for gcc_toolset_version in "${gcc_toolsets_to_install[@]}"; do
