@@ -189,6 +189,7 @@ yb_determine_ubuntu_packages() {
     libbz2-dev
     libicu-dev
     libncurses5-dev
+    libpq-dev
     libreadline-dev
     libssl-dev
     libtool
