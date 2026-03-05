@@ -23,8 +23,6 @@ readonly REDHAT_COMMON_PACKAGES=(
   gdbm-devel
   git
   glibc-all-langpacks
-  java-1.8.0-openjdk
-  java-1.8.0-openjdk-devel
   langpacks-en
   less
   libatomic
@@ -109,7 +107,7 @@ install_packages() {
   yb_end_group
 
   yb_start_group "Installing epel-release"
-  amazon-linux-extras install epel
+  amazon-linux-extras install epel -y
   yb_end_group
 
   yb_start_group "Installing development tools"
@@ -125,7 +123,7 @@ install_packages() {
 }
 
 yb_configure_python38_on_amzn2() {
-  amazon-linux-extras install python3.8
+  amazon-linux-extras install python3.8 -y
   rm -f /usr/bin/python3
   ln -s /usr/bin/python3.8 /usr/bin/python3
   python3 -m pip install --upgrade pip
@@ -138,6 +136,9 @@ yb_configure_python38_on_amzn2() {
 detect_os_version
 
 install_packages
+
+# install java
+"${BASH_SOURCE%/*}"/install_zulu.sh
 
 yb_yum_cleanup
 
