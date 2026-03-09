@@ -197,7 +197,6 @@ yb_determine_ubuntu_packages() {
     locales
     maven
     ninja-build
-    openjdk-8-jdk-headless
     patchelf
     php
     php-common

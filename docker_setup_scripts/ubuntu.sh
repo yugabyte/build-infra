@@ -11,6 +11,8 @@ ubuntu_major_version=${DISTRIB_RELEASE%%.*}
 
 yb_determine_ubuntu_packages
 yb_debian_configure_and_install_packages "${ubuntu_packages[@]}"
+# Install zulu java
+"${BASH_SOURCE%/*}"/install_zulu.sh
 yb_perform_universal_steps
 yb_install_arc
 yb_remove_build_infra_scripts

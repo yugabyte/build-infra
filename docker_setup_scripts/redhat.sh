@@ -40,12 +40,6 @@ readonly REDHAT_COMMON_PACKAGES=(
   gcc-c++
   git
   glibc-all-langpacks
-  java-1.8.0-openjdk
-  java-1.8.0-openjdk-devel
-  java-11-openjdk
-  java-11-openjdk-devel
-  java-17-openjdk
-  java-17-openjdk-devel
   langpacks-en
   less
   libatomic
@@ -222,6 +216,9 @@ install_packages() {
 # -------------------------------------------------------------------------------------------------
 
 detect_os_version
+
+# install java
+"${BASH_SOURCE%/*}"/install_zulu.sh
 
 install_packages
 
