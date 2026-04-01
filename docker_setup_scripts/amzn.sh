@@ -23,6 +23,7 @@ readonly REDHAT_COMMON_PACKAGES=(
   gdbm-devel
   git
   glibc-all-langpacks
+  jq
   langpacks-en
   less
   libatomic
@@ -136,9 +137,6 @@ yb_configure_python38_on_amzn2() {
 detect_os_version
 
 install_packages
-
-# install java
-"${BASH_SOURCE%/*}"/install_zulu.sh
 
 yb_yum_cleanup
 

@@ -14,6 +14,7 @@ packages=(
   flex
   git
   groff-base
+  jq
   less
   libasan5
   libbz2-dev
@@ -25,7 +26,6 @@ packages=(
   libtsan0
   locales
   maven
-  npm
   patchelf
   pkg-config
   python3-dev

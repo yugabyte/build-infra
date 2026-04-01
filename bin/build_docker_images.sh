@@ -92,7 +92,7 @@ fi
 
 dockerfile_path=$yb_build_infra_root/docker_images/$image_name/Dockerfile
 
-timestamp=$( get_timestamp_for_filenames )
+timestamp=$( git log -1 --pretty='format:%cd' --date='format:%Y-%m-%dT%H_%M_%S' )
 
 dockerhub_org=""
 dockerhub_user=""
@@ -121,7 +121,7 @@ if [[ -n $tag_prefix ]]; then
   tag_prefix=$tag_prefix/
 fi
 
-if [[ $should_push == "true" ]]; then
+if [[ $should_push != "true" ]]; then
   log "This is a pull request (--pull_request parameter used), will not push to DockerHub."
 fi
 
@@ -137,7 +137,7 @@ fi
   # We need to change to this directory to be able to reference scripts from docker_setup_scripts.
   cd "$yb_build_infra_root"
 
-  docker build -f "$dockerfile_path" -t "$tag" -t "$tagbase:latest" .
+  docker build --no-cache -f "$dockerfile_path" -t "$tag" -t "$tagbase:latest" .
 )
 
 if [[ $should_push == "true" ]]; then

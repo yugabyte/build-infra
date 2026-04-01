@@ -184,6 +184,7 @@ yb_determine_ubuntu_packages() {
     flex
     git
     groff-base
+    jq
     less
     libasan5
     libbz2-dev
@@ -274,6 +275,17 @@ yb_create_yugabyteci_user() {
   yb_end_group
 }
 
+yb_install_nvm_as_yugabyteci_user() {
+  yb_start_group "Installing NVM and node 16"
+  sudo -iu yugabyteci bash <<'EOF'
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    . "$NVM_DIR/nvm.sh"  # This loads nvm
+    nvm install 16
+EOF
+  yb_end_group
+}
+
 yb_install_hub_tool() {
   yb_start_group "Installing the hub tool for interacting with GitHub"
   bash "$yb_build_infra_scripts_dir/install_hub_tool.sh"
@@ -281,7 +293,7 @@ yb_install_hub_tool() {
 }
 
 yb_install_ninja() {
-  yb_start_group "Instaling the Ninja build system"
+  yb_start_group "Installing the Ninja build system"
   bash "$yb_build_infra_scripts_dir/install_ninja.sh"
   yb_end_group
 }
@@ -313,6 +325,12 @@ yb_install_spark() {
 yb_install_rust() {
   yb_start_group "Installing Rust"
   bash "$yb_build_infra_scripts_dir/install_rust.sh"
+  yb_end_group
+}
+
+yb_install_zulu() {
+  yb_start_group "Installing Zulu Java"
+  bash "$yb_build_infra_scripts_dir/install_zulu.sh"
   yb_end_group
 }
 
@@ -444,6 +462,8 @@ yb_install_go_packages() {
 
 yb_perform_universal_steps() {
   yb_create_yugabyteci_user
+  yb_install_nvm_as_yugabyteci_user
+  yb_install_zulu
   yb_install_golang
   yb_install_hub_tool
   yb_install_shellcheck

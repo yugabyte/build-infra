@@ -80,12 +80,17 @@ else
   echo "no 'alternatives/update-alternatives' command found"
 fi
 
+# Ensure there is a default JAVA_HOME variable set
+if [[ -d /etc/profile.d ]]; then
+  echo export JAVA_HOME=${jvm_dir}/zulu-17.jdk > /etc/profile.d/java_home.sh
+fi
+
 for j in java javac jstack jinfo; do
   if [[ -n "${altcmd}" ]]; then
-    ${altcmd} --install "/usr/bin/${j}" "${j}" "${jvm_dir}/zulu-8.jdk/bin/${j}" 900
+    ${altcmd} --install "/usr/bin/${j}" "${j}" "${jvm_dir}/zulu-17.jdk/bin/${j}" 900
   else
     # no alternatives command so just create symlinks to /usr/local/bin instead
-    ln -s "${jvm_dir}/zulu-8.jdk/bin/${j}" "/usr/local/bin/${j}"
+    ln -s "${jvm_dir}/zulu-17.jdk/bin/${j}" "/usr/local/bin/${j}"
   fi
 done
 

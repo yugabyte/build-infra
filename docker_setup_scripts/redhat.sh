@@ -40,13 +40,13 @@ readonly REDHAT_COMMON_PACKAGES=(
   gcc-c++
   git
   glibc-all-langpacks
+  jq
   langpacks-en
   less
   libatomic
   libffi-devel
   libsqlite3x-devel
   libtool
-  npm
   openssl-devel
   openssl-devel
   patch
@@ -216,9 +216,6 @@ install_packages() {
 # -------------------------------------------------------------------------------------------------
 
 detect_os_version
-
-# install java
-"${BASH_SOURCE%/*}"/install_zulu.sh
 
 install_packages
 
