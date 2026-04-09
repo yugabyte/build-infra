@@ -463,7 +463,6 @@ yb_install_go_packages() {
 yb_perform_universal_steps() {
   yb_create_yugabyteci_user
   yb_install_nvm_as_yugabyteci_user
-  yb_install_zulu
   yb_install_golang
   yb_install_hub_tool
   yb_install_shellcheck
@@ -474,6 +473,7 @@ yb_perform_universal_steps() {
   yb_install_go_packages
   yb_install_bazel
   yb_install_cmake
+  yb_install_zulu
 }
 
 run_cmd_hide_output_if_ok() {

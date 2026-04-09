@@ -137,7 +137,8 @@ fi
   # We need to change to this directory to be able to reference scripts from docker_setup_scripts.
   cd "$yb_build_infra_root"
 
-  docker build --no-cache -f "$dockerfile_path" -t "$tag" -t "$tagbase:latest" .
+  docker build --progress=plain --no-cache -f "$dockerfile_path" -t "$tag" -t "$tagbase:latest" . \
+    2>&1 | tee docker_build.log
 )
 
 if [[ $should_push == "true" ]]; then

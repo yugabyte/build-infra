@@ -18,6 +18,17 @@ zulu_arch() {
   echo $zarch
 }
 
+# Remove system openjdk
+source /etc/os-release
+case "$ID" in
+  almalinux)
+    dnf remove "*-openjdk-*" -y
+    ;;
+  *)
+    echo "Not removing openjdk on $ID"
+    ;;
+esac
+
 # we require curl so just quit now if it isn't available
 curl --version >/dev/null
 
