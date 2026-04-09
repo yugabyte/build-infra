@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Remove system openjdk
+dnf remove "*-openjdk-*" -y
+
 zulu_arch() {
   if [ -z ${zarch+x} ]; then # we haven't been called yet
     case $(uname -m) in
