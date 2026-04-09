@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Remove system openjdk
-dnf remove "*-openjdk-*" -y
-
 zulu_arch() {
   if [ -z ${zarch+x} ]; then # we haven't been called yet
     case $(uname -m) in
@@ -20,6 +17,17 @@ zulu_arch() {
   fi
   echo $zarch
 }
+
+# Remove system openjdk
+source /etc/os-release
+case "$ID" in
+  almalinux)
+    dnf remove "*-openjdk-*" -y
+    ;;
+  *)
+    echo "Not removing openjdk on $ID"
+    ;;
+esac
 
 # we require curl so just quit now if it isn't available
 curl --version >/dev/null
