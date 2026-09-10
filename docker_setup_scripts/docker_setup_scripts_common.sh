@@ -182,7 +182,7 @@ yb_determine_ubuntu_packages() {
     git
     groff-base
     less
-    libasan5
+    libasan6
     libbz2-dev
     libicu-dev
     libncurses5-dev
