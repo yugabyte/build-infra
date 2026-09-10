@@ -186,7 +186,7 @@ yb_determine_ubuntu_packages() {
     groff-base
     jq
     less
-    libasan5
+    libasan6
     libbz2-dev
     libicu-dev
     libncurses5-dev

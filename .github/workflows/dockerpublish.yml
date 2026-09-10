@@ -41,6 +41,9 @@ jobs:
           - image_name: ubuntu2404
             architecture: x86_64
 
+          - image_name: ubuntu2604
+            architecture: x86_64
+
           - image_name: amazonlinux2
             architecture: aarch64
 
@@ -54,6 +57,9 @@ jobs:
             architecture: aarch64
 
           - image_name: ubuntu2404
+            architecture: aarch64
+
+          - image_name: ubuntu2604
             architecture: aarch64
 
     runs-on: ${{ matrix.architecture == 'aarch64' && 'ubuntu-24.04-aarch64-2core-8gb' || 'ubuntu-latest' }}
