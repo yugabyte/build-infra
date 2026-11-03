@@ -181,6 +181,7 @@ yb_determine_ubuntu_packages() {
     automake
     bison
     curl
+    exuberant-ctags
     flex
     git
     groff-base
