@@ -181,7 +181,6 @@ yb_determine_ubuntu_packages() {
     automake
     bison
     curl
-    exuberant-ctags
     flex
     git
     groff-base
@@ -208,7 +207,6 @@ yb_determine_ubuntu_packages() {
     pycodestyle
     python3-dev
     python3-pip
-    python3-pytest
     python3-venv
     python3-wheel
     python3.11
@@ -221,6 +219,11 @@ yb_determine_ubuntu_packages() {
     vim
     wget
     xz-utils
+  )
+  # Packages that only yugabyte-db's pr-lint check needs.
+  ubuntu_packages+=(
+    exuberant-ctags
+    python3-pytest
   )
   local gcc_versions=()
   if [[ $ubuntu_major_version -eq 20 ]]; then
