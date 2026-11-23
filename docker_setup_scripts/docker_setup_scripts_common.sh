@@ -208,6 +208,7 @@ yb_determine_ubuntu_packages() {
     pycodestyle
     python3-dev
     python3-pip
+    python3-pytest
     python3-venv
     python3-wheel
     python3.11
